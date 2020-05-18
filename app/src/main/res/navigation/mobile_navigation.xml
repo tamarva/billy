@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.billy.billy.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.billy.billy.bill.BillFragment"
+        android:label="@string/title_bill"
+        tools:layout="@layout/fragment_bill" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.billy.billy.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:name="com.billy.billy.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.billy.billy.dashboard;
+package com.billy.billy.bill;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,16 +13,16 @@ import android.arch.lifecycle.ViewModelProviders;
 
 import com.billy.billy.R;
 
-public class DashboardFragment extends Fragment {
-    private DashboardViewModel dashboardViewModel;
+public class BillFragment extends Fragment {
+    private BillViewModel billViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                ViewModelProviders.of(this).get(DashboardViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        billViewModel =
+                ViewModelProviders.of(this).get(BillViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_bill, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        billViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

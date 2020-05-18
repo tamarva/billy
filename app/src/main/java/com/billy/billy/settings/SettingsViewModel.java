@@ -1,13 +1,13 @@
-package com.billy.billy.notifications;
+package com.billy.billy.settings;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-public class NotificationsViewModel extends ViewModel {
+public class SettingsViewModel extends ViewModel {
     private MutableLiveData<String> mText;
 
-    public NotificationsViewModel() {
+    public SettingsViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is notifications fragment");
     }
