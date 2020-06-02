@@ -51,6 +51,12 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.0-beta01'
     implementation 'androidx.navigation:navigation-ui:2.3.0-beta01'
 
+    // AppCompat
+    def appcompat_version = "1.1.0"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    // For loading and tinting drawables on older versions of the platform:
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+
     // RxJava
     def rxJavaVersion = "3.0.0"
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
