@@ -10,11 +10,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.billy.billy.home.HomeViewModel;
+
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 public class CameraHandler implements HomeViewModel.Action {
     private static final String TAG = CameraHandler.class.getSimpleName();
