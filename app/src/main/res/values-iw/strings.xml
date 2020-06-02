@@ -8,7 +8,22 @@
     <!-- Home Fragment -->
     <string name="scan">סרוק</string>
 
+    <!-- Home Fragment -->
+    <string name="settings_general_category_title">כללי</string>
+    <string name="settings_user_name_preferences_title">שם משתמש (%s)</string>
+    <string name="settings_user_name_dialog_title">הכנס שם משתמש:</string>
+    <string name="settings_user_name_dialog_message">הכנס שם משתמש</string>
+
     <!-- Text recognition -->
     <string name="ask_user_to_retry">שגיאה: נסה שוב במטוטא.</string>
+
+    <!-- Connections -->
+    <string name="connections_default_user_name_panda">פנדה</string>
+    <string name="connections_default_user_name_parrot">תוכי</string>
+    <string name="connections_default_user_name_lemur">למור</string>
+    <string name="connections_connection_initiated_dialog_title">לאשר חיבור ל-%s?</string>
+    <string name="connections_connection_initiated_dialog_message">אנא אשר כי הקוד זהה בשני המכשירים: %s</string>
+    <string name="connections_connection_initiated_dialog_positive_button">אשר</string>
+    <string name="connections_connection_initiated_dialog_negative_button">דחה</string>
 
 </resources>

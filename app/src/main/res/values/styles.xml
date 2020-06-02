@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Alert dialog -->
+    <style name="BillyAlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/alert_dialog_background</item>
+        <item name="android:textColor">@color/alert_dialog_text_color</item>
+        <item name="android:textSize">@dimen/alert_dialog_text_size</item>
+    </style>
+
 </resources>

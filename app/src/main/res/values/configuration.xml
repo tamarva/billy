@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Settings Fragment -->
+    <string name="settings_user_name_key" translatable="false">settings_user_name_key</string>
+
+    <!-- Connections -->
+    <string name="connection_service_id" translatable="false">com.billy.billy.connection_service_id</string>
+    <integer name="connection_api_version">1</integer>
+
+</resources>
