@@ -61,4 +61,9 @@ dependencies {
     def rxJavaVersion = "3.0.0"
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaVersion"
+
+    // AutoValue
+    def autoValueVersion = "1.7.2"
+    implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 }
