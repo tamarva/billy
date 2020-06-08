@@ -1,5 +1,4 @@
-# billy
-Billy - pay and tip in 10 seconds (or less)!
+# Billy - Pay and tip in 10 seconds (or less)!
 
 The days of bringing calculators to restaurants are over!
 Simply scan the bill, have each of your friends pick the items they ordered, and pay!
