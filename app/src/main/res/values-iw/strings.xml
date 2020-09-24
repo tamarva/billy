@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Billy</string>
+    <string name="title_home">בית</string>
+    <string name="title_bill">חשבונית</string>
+    <string name="title_settings">הגדרות</string>
+</resources>
