@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "544820029059",
+    "firebase_url": "https://ml-kit-text-recognition-ac5e8.firebaseio.com",
+    "project_id": "ml-kit-text-recognition-ac5e8",
+    "storage_bucket": "ml-kit-text-recognition-ac5e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544820029059:android:7fb1fb01bbf80e534e1db6",
+        "android_client_info": {
+          "package_name": "com.billy.billy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544820029059-4pj50g5mqcj4hmhm8f33pbo4ldhcg4if.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrtNULeHId3-YPs7pnf1_1hulJ_aEzrX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544820029059-4pj50g5mqcj4hmhm8f33pbo4ldhcg4if.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

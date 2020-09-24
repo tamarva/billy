@@ -3,4 +3,11 @@
     <string name="title_home">Home</string>
     <string name="title_bill">Bill</string>
     <string name="title_settings">Settings</string>
+
+    <!-- Home Fragment -->
+    <string name="scan">Scan</string>
+
+    <!-- Text recognition -->
+    <string name="ask_user_to_retry">Error: Please retry.</string>
+
 </resources>

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -70,4 +71,11 @@ dependencies {
 
     // Guava
     implementation 'com.google.guava:guava:28.0-android'
+
+    // Google services
+    implementation 'com.google.gms:google-services:4.3.3'
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-core:17.5.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
 }

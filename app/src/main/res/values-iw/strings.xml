@@ -4,4 +4,11 @@
     <string name="title_home">בית</string>
     <string name="title_bill">חשבונית</string>
     <string name="title_settings">הגדרות</string>
+
+    <!-- Home Fragment -->
+    <string name="scan">סרוק</string>
+
+    <!-- Text recognition -->
+    <string name="ask_user_to_retry">שגיאה: נסה שוב במטוטא.</string>
+
 </resources>

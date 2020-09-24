@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.billy.billy.R;
 
@@ -18,17 +17,17 @@ import androidx.lifecycle.ViewModelProvider;
 public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewModel = (new ViewModelProvider(this)).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        initObserves(textView);
-        textView.setOnClickListener(v -> viewModel.onCameraButtonClicked());
+        root.findViewById(R.id.scan_bill_button)
+                .setOnClickListener(view -> viewModel.onCameraButtonClicked());
+        initObserves();
         return root;
     }
 
-    public void initObserves(TextView textView) {
-        viewModel.getText().observe(getViewLifecycleOwner(), textView::setText);  // todo delete
+    public void initObserves() {
         observeAction(viewModel);
     }
 
@@ -50,7 +49,7 @@ public class HomeFragment extends Fragment {
         if (requestCode == HomeViewModel.REQUEST_TAKE_PHOTO) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
-                    viewModel.onResults();
+                    viewModel.onBillScanned();
                     break;
                 case Activity.RESULT_CANCELED:
                     viewModel.onCancel();
