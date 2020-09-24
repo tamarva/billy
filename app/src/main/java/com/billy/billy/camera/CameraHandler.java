@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 public class CameraHandler implements HomeViewModel.Action {
     private static final String TAG = CameraHandler.class.getSimpleName();
+    private static final String IMAGE_NAME_PREFIX = "BILLY_IMAGE_";
     private int requestCode;
     private String imagePath;
 
@@ -32,10 +33,11 @@ public class CameraHandler implements HomeViewModel.Action {
 
     private File createImageFile(Context context) throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "BILLY_IMAGE_" + timeStamp;
+        String imageFileName = IMAGE_NAME_PREFIX + timeStamp;
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".png", storageDir);
         imagePath = image.getAbsolutePath();
+        Log.d(TAG, "createImageFile: the image will be saved at " + imagePath);
         return image;
     }
 
