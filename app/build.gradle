@@ -67,4 +67,7 @@ dependencies {
     def autoValueVersion = "1.7.4"
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
+    // Guava
+    implementation 'com.google.guava:guava:28.0-android'
 }
