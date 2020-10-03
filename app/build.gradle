@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.billy.billy"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -38,21 +38,22 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // Android stuff
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta6"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.1"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
 
     // Android Navigation
-    implementation 'androidx.navigation:navigation-fragment:2.3.0-beta01'
-    implementation 'androidx.navigation:navigation-ui:2.3.0-beta01'
+    def android_navigation_version = "2.3.0"
+    implementation "androidx.navigation:navigation-fragment:$android_navigation_version"
+    implementation "androidx.navigation:navigation-ui:$android_navigation_version"
 
     // AppCompat
-    def appcompat_version = "1.1.0"
+    def appcompat_version = "1.2.0"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     // For loading and tinting drawables on older versions of the platform:
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
@@ -63,7 +64,10 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaVersion"
 
     // AutoValue
-    def autoValueVersion = "1.7.2"
+    def autoValueVersion = "1.7.4"
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
+    // Guava
+    implementation 'com.google.guava:guava:28.0-android'
 }
