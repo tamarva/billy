@@ -21,27 +21,27 @@ public class CameraHandler implements HomeViewModel.Action {
     private static final String TAG = CameraHandler.class.getSimpleName();
     private static final String IMAGE_NAME_PREFIX = "BILLY_IMAGE_";
     private int requestCode;
-    private String imagePath;
+    private Uri imageUri;
 
     public CameraHandler(int requestCode) {
         this.requestCode = requestCode;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public Uri getImageUri(){
+        return imageUri;
     }
 
     private File createImageFile(Context context) throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = IMAGE_NAME_PREFIX + timeStamp;
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".png", storageDir);
-        imagePath = image.getAbsolutePath();
-        Log.d(TAG, "createImageFile: the image will be saved at " + imagePath);
-        return image;
+        File imageFile = File.createTempFile(imageFileName, ".png", storageDir);
+        imageUri = Uri.fromFile(imageFile);
+        Log.d(TAG, "createImageFile: the image will be saved at " + imageUri.toString());
+        return imageFile;
     }
 
-    private void dispatchTakePictureIntent(Fragment fragment) {
+     private void dispatchTakePictureIntent(Fragment fragment) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(fragment.getContext().getPackageManager()) != null) {
             File photoFile = null;
@@ -51,10 +51,10 @@ public class CameraHandler implements HomeViewModel.Action {
                 Log.e(TAG, "Error while creating a file for the image.");
             }
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(fragment.getContext(),
+                imageUri = FileProvider.getUriForFile(fragment.getContext(),
                         fragment.getContext().getApplicationContext().getPackageName() + ".provider",
                         photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 fragment.startActivityForResult(takePictureIntent, requestCode);
             }
         }
