@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/home_fragment_scan_bill_button_corners_radius" />
+    <solid android:color="@color/home_fragment_scan_bill_button_background_color" />
+</shape>

@@ -36,6 +36,7 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.preference:preference:1.1.1'
 
     // Testing
     testImplementation 'junit:junit:4.13'
@@ -58,6 +59,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     // For loading and tinting drawables on older versions of the platform:
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+
+    // Android Nearby Connections
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
 
     // RxJava
     def rxJavaVersion = "3.0.0"

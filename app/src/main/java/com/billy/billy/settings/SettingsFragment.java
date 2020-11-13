@@ -1,28 +1,42 @@
 package com.billy.billy.settings;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.billy.billy.R;
+import com.billy.billy.utils.Preferences;
+import com.google.common.base.Strings;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
-public class SettingsFragment extends Fragment {
-    private SettingsViewModel settingsViewModel;
-
-    @Nullable
+public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        settingsViewModel = (new ViewModelProvider(this)).get(SettingsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-        settingsViewModel.getText().observe(getViewLifecycleOwner(), s -> textView.setText(s));
-        return root;
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.fragment_settings, rootKey);
+
+        initUserNamePreferences();
+    }
+
+    private void initUserNamePreferences() {
+        Preference userNameEditTextPreference = findPreference(getString(R.string.settings_user_name_key));
+        checkState(userNameEditTextPreference != null);
+
+        String currentUserName = Preferences.Connections.getUserName(requireActivity());
+        userNameEditTextPreference.setTitle(getString(R.string.settings_user_name_preferences_title, currentUserName));
+        userNameEditTextPreference
+                .setOnPreferenceChangeListener((preference, newValue) -> {
+                    String newValueAsString = (String) newValue;
+                    if (Strings.isNullOrEmpty(newValueAsString)) {
+                        return false;
+                    }
+
+                    Preferences.Connections.setUserName(requireActivity(), newValueAsString);
+                    userNameEditTextPreference.setTitle(
+                            getString(R.string.settings_user_name_preferences_title, newValueAsString));
+                    return true;
+                });
+
     }
 }
