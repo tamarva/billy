@@ -1,8 +1,8 @@
-package com.billy.text_recognition;
-
-import androidx.annotation.NonNull;
+package com.billy.billy.text_recognition;
 
 import com.google.auto.value.AutoValue;
+
+import androidx.annotation.NonNull;
 
 @AutoValue
 public abstract class BillItem {

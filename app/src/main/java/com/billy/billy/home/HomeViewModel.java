@@ -27,7 +27,7 @@ import com.billy.billy.connections.ConnectionsUtils;
 import com.billy.billy.connections.Endpoint;
 import com.billy.billy.connections.EndpointDiscoveryListener;
 import com.billy.billy.connections.PayloadListener;
-import com.billy.text_recognition.TextRecognition;
+import com.billy.billy.text_recognition.TextRecognition;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;

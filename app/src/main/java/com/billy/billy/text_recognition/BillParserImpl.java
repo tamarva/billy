@@ -1,19 +1,19 @@
-package com.billy.text_recognition;
-
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
+package com.billy.billy.text_recognition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+
+import androidx.annotation.NonNull;
 
 public class BillParserImpl implements BillParser {
     private static final String TAG = BillParserImpl.class.getSimpleName();

@@ -1,11 +1,11 @@
-package com.billy.text_recognition;
+package com.billy.billy.text_recognition;
+
+import java.io.IOException;
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import com.billy.billy.R;
 import com.google.firebase.FirebaseApp;
@@ -13,7 +13,7 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
-import java.io.IOException;
+import androidx.annotation.NonNull;
 
 /**
  * This class is responsible for getting an image and performing OCR on it.

@@ -1,4 +1,4 @@
-package com.billy.text_recognition;
+package com.billy.billy.text_recognition;
 
 import java.util.ArrayList;
 import java.util.List;
