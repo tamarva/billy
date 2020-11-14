@@ -1,15 +1,19 @@
 package com.billy.billy.bill;
 
+import android.app.Application;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class BillViewModel extends ViewModel {
+import com.billy.billy.R;
+
+public class HistoryViewModel extends ViewModel {
     private MutableLiveData<String> mText;
 
-    public BillViewModel() {
+    public HistoryViewModel(Application application) {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        mText.setValue(application.getString(R.string.coming_soon_title));
     }
 
     public LiveData<String> getText() {

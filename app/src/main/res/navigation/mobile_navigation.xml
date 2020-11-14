@@ -18,9 +18,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.billy.billy.bill.BillFragment"
-        android:label="@string/title_bill"
-        tools:layout="@layout/fragment_bill">
+        android:name="com.billy.billy.bill.HistoryFragment"
+        android:label="@string/title_history"
+        tools:layout="@layout/fragment_history">
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_home"
             app:destination="@id/navigation_home" />
