@@ -37,6 +37,7 @@ allprojects {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // Testing
     testImplementation 'junit:junit:4.13'
@@ -86,4 +87,7 @@ dependencies {
     // Image Cropper
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
+
+    // Email
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 }

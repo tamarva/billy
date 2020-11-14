@@ -1,6 +1,7 @@
 package com.billy.billy.home;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,10 +17,18 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.billy.billy.R;
+import com.billy.billy.connections.Endpoint;
+import com.billy.billy.email.EmailFragment;
+import com.google.common.base.Preconditions;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
@@ -55,7 +65,14 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         billItemAdapter = new BillItemsListAdapter();
         recyclerViewBill.setAdapter(billItemAdapter);
+        Button emailButton = rootView.findViewById(R.id.home_fragment_send_email_button);
 
+
+        rootView.findViewById(R.id.home_fragment_scan_bill_button).setOnClickListener(view -> {
+            emailButton.setVisibility(View.INVISIBLE);
+        });
+
+        sendEmailButton((rootView), emailButton);
         history = rootView.findViewById(R.id.home_fragment_history);
         history.setOnClickListener(view -> viewModel.tomer());
 
@@ -66,6 +83,26 @@ public class HomeFragment extends Fragment {
     private void onChooseFile() {
         CropImage.activity()
                 .start(requireContext(), this);
+    }
+
+    private void sendEmailButton(View rootView, Button emailButton){
+        View billView = rootView.findViewById(R.id.home_fragment_bill_items_rv);
+//        if (billView.getVisibility() == View.VISIBLE){ // todo undo "//" after fix recycle
+        emailButton.setVisibility(View.VISIBLE);
+        emailButton.setOnClickListener(view -> sendEmail());
+        // }
+    }
+
+    private void sendEmail() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        if (sp.getString("email_key", "").equals("")){
+            Fragment emailFragment = new EmailFragment();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.home_fragment_recycler_view_wrapper, emailFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override

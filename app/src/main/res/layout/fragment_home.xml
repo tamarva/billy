@@ -54,4 +54,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/home_fragment_recycler_view_wrapper" />
 
+    <Button
+        android:id="@+id/home_fragment_send_email_button"
+        android:layout_width="240dp"
+        android:layout_height="45dp"
+        android:text="send bill to email"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:background="@drawable/home_fragment_email_bill_button_background"
+        android:shadowColor="#A8A8A8"
+        android:shadowRadius="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/home_fragment_scan_bill_button"
+        android:visibility="invisible"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
