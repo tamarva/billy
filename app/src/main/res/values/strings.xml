@@ -27,5 +27,7 @@
     <string name="connections_connection_success">Connected to %s</string>
     <string name="connections_connection_failed">Couldn\'t connect to %s</string>
     <string name="connections_connection_lost">Connection to endpoint %s lost</string>
+    <string name="coming_soon_title">coming soon!</string>
+    <string name="title_history">history</string>
 
 </resources>
