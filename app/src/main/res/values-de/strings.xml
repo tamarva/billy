@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Billy</string>
+
+    <!-- Home Fragment -->
+    <string name="title_home">Zuhause</string>
+    <string name="scan">Scan</string>
+
+    <!-- Settings Fragment -->
+    <string name="title_settings">die Einstellungen</string>
+    <string name="settings_general_category_title">Allgemeines</string>
+    <string name="settings_user_name_preferences_title">Nutzername</string>
+    <string name="settings_user_name_dialog_title">Benutzername eingeben:</string>
+    <string name="settings_user_name_dialog_message">Benutzername eingeben</string>
+
+    <!-- History Fragment -->
+    <string name="title_history">Geschichte</string>
+    <string name="history_coming_soon_title">kommt bald!</string>
+
+    <!-- Text recognition -->
+    <string name="ask_user_to_retry">Fehler: Bitte versuchen Sie es erneut.</string>
+
+    <!-- Connections -->
+    <string name="connections_default_user_name_panda">Panda</string>
+    <string name="connections_default_user_name_parrot">Parrot</string>
+    <string name="connections_default_user_name_lemur">Lemur</string>
+    <string name="connections_connection_initiated_dialog_title">Verbindung zu akzeptieren</string>
+    <string name="connections_connection_initiated_dialog_message">Bestätigen Sie, dass der Code auf beiden Geräten übereinstimmt:</string>
+    <string name="connections_connection_initiated_dialog_positive_button">Akzeptieren</string>
+    <string name="connections_connection_initiated_dialog_negative_button">Verweigern</string>
+    <string name="connections_connection_success">Verbunden</string>
+    <string name="connections_connection_failed">Verbindung zu% s konnte nicht hergestellt werden</string>
+    <string name="connections_connection_lost">Verbindung zum Endpunkt% s unterbrochen</string>
+
+</resources>

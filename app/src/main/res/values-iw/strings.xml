@@ -16,7 +16,7 @@
 
     <!-- History Fragment -->
     <string name="title_history">היסטוריה</string>
-    <string name="coming_soon_title">מגיע בקרוב</string>
+    <string name="history_coming_soon_title">מגיע בקרוב</string>
 
     <!-- Text recognition -->
     <string name="ask_user_to_retry">שגיאה: נסה שוב במטוטא.</string>
