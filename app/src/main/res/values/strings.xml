@@ -13,6 +13,10 @@
     <string name="settings_user_name_dialog_title">Enter username:</string>
     <string name="settings_user_name_dialog_message">Enter username</string>
 
+    <!-- History Fragment -->
+    <string name="coming_soon_title">coming soon!</string>
+    <string name="title_history">history</string>
+
     <!-- Text recognition -->
     <string name="ask_user_to_retry">Error: Please retry.</string>
 
@@ -27,7 +31,5 @@
     <string name="connections_connection_success">Connected to %s</string>
     <string name="connections_connection_failed">Couldn\'t connect to %s</string>
     <string name="connections_connection_lost">Connection to endpoint %s lost</string>
-    <string name="coming_soon_title">coming soon!</string>
-    <string name="title_history">history</string>
 
 </resources>

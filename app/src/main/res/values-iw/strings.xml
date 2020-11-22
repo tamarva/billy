@@ -8,6 +8,10 @@
     <!-- Home Fragment -->
     <string name="scan">סרוק</string>
 
+    <!-- History Fragment -->
+    <string name="coming_soon_title">מגיע בקרוב</string>
+    <string name="title_history">היסטוריה</string>
+
     <!-- Home Fragment -->
     <string name="settings_general_category_title">כללי</string>
     <string name="settings_user_name_preferences_title">שם משתמש (%s)</string>
