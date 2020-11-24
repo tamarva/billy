@@ -14,7 +14,7 @@ public abstract class BillItem {
 
     public abstract double total();
 
-    public static BillItem create(@NonNull int amount, String name, double price, double total) {
+    public static BillItem create(int amount, @NonNull String name, double price, double total) {
         return builder()
                 .amount(amount)
                 .name(name)

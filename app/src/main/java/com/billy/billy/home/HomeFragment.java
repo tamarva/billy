@@ -1,7 +1,5 @@
 package com.billy.billy.home;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -10,11 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.billy.billy.R;
-import com.billy.billy.connections.Endpoint;
-import com.google.common.base.Preconditions;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -25,11 +18,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.billy.billy.R;
+import com.billy.billy.connections.Endpoint;
+import com.google.common.base.Preconditions;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
     private TextView history;
     private DiscoveredEndpointsListAdapter adapter;
-    private Uri imageUri;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,8 +55,8 @@ public class HomeFragment extends Fragment {
                 .setOnClickListener(view -> onChooseFile());
     }
 
-    public void onChooseFile() {
-        CropImage.activity(imageUri)
+    private void onChooseFile() {
+        CropImage.activity()
                 .start(requireContext(), this);
     }
 
@@ -98,7 +97,7 @@ public class HomeFragment extends Fragment {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                imageUri = result.getUri();
+                Uri imageUri = result.getUri();
                 viewModel.onBillScanned(imageUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();

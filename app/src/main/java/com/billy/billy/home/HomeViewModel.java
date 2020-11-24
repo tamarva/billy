@@ -1,13 +1,5 @@
 package com.billy.billy.home;
 
-import static com.google.common.base.Preconditions.checkState;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -18,6 +10,14 @@ import android.net.Uri;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.ConnectionLifecycleListener;
@@ -35,13 +35,13 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import static com.google.common.base.Preconditions.checkState;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
@@ -165,12 +165,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Endpoint>> getDiscoveredEndpoints() {
         return discoveredEndpoints;
-    }
-
-    public void onCameraButtonClicked() {
-        if (canHandleClick) {
-            canHandleClick = false;
-        }
     }
 
     public void onBillScanned(Uri imageUri) {
