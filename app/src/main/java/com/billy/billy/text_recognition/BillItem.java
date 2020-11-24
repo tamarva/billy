@@ -1,22 +1,25 @@
 package com.billy.billy.text_recognition;
 
-import com.google.auto.value.AutoValue;
-
 import androidx.annotation.NonNull;
+
+import com.google.auto.value.AutoValue;
 
 @AutoValue
 public abstract class BillItem {
+    public abstract int amount();
+
     public abstract String name();
 
     public abstract double price();
 
-    public abstract int amount();
+    public abstract double total();
 
-    public static BillItem create(@NonNull String name, double price, int amount) {
+    public static BillItem create(@NonNull int amount, String name, double price, double total) {
         return builder()
+                .amount(amount)
                 .name(name)
                 .price(price)
-                .amount(amount)
+                .total(total)
                 .build();
     }
 
@@ -28,11 +31,13 @@ public abstract class BillItem {
 
     @AutoValue.Builder
     public abstract static class Builder {
+        public abstract Builder amount(int amount);
+
         public abstract Builder name(String name);
 
         public abstract Builder price(double price);
 
-        public abstract Builder amount(int amount);
+        public abstract Builder total(double total);
 
         public abstract BillItem build();
     }

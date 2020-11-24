@@ -1,8 +1,10 @@
 package com.billy.billy.home;
 
-import android.app.Activity;
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
 import com.google.common.base.Preconditions;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -26,6 +29,7 @@ public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
     private TextView history;
     private DiscoveredEndpointsListAdapter adapter;
+    private Uri imageUri;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,11 +49,16 @@ public class HomeFragment extends Fragment {
         adapter = new DiscoveredEndpointsListAdapter();
         recyclerView.setAdapter(adapter);
 
-        rootView.findViewById(R.id.home_fragment_scan_bill_button)
-                .setOnClickListener(view -> viewModel.onCameraButtonClicked());
-
         history = rootView.findViewById(R.id.home_fragment_history);
         history.setOnClickListener(view -> viewModel.tomer());
+
+        rootView.findViewById(R.id.home_fragment_scan_bill_button)
+                .setOnClickListener(view -> onChooseFile());
+    }
+
+    public void onChooseFile() {
+        CropImage.activity(imageUri)
+                .start(requireContext(), this);
     }
 
     @Override
@@ -86,14 +95,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == HomeViewModel.REQUEST_TAKE_PHOTO) {
-            switch (resultCode) {
-                case Activity.RESULT_OK:
-                    viewModel.onBillScanned();
-                    break;
-                case Activity.RESULT_CANCELED:
-                    viewModel.onPhotoCanceled();
-                    break;
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                imageUri = result.getUri();
+                viewModel.onBillScanned(imageUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
             }
         }
     }

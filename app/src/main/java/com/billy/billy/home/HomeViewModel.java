@@ -14,12 +14,12 @@ import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.billy.billy.R;
-import com.billy.billy.camera.CameraHandler;
 import com.billy.billy.connections.ConnectionLifecycleListener;
 import com.billy.billy.connections.ConnectionRole;
 import com.billy.billy.connections.ConnectionsService;
@@ -51,7 +51,6 @@ public class HomeViewModel extends AndroidViewModel {
     private static final long VIBRATION_STRENGTH = 500;
     @SuppressLint("StaticFieldLeak") private final Context applicationContext;
     private final ConnectionsService connectionService;
-    private final CameraHandler cameraHandler;
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> history = new MutableLiveData<>("EMPTY");
@@ -61,7 +60,6 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(Application application) {
         super(application);
         applicationContext = application;
-        cameraHandler = new CameraHandler(REQUEST_TAKE_PHOTO);
         connectionService = new ConnectionsService(applicationContext, createConnectionLifecycleListener(),
                 createEndpointDiscoveryListener(), createPayloadListener());
         connectionService.setConnectionRole(connectionRole);
@@ -172,14 +170,12 @@ public class HomeViewModel extends AndroidViewModel {
     public void onCameraButtonClicked() {
         if (canHandleClick) {
             canHandleClick = false;
-            action.setValue(cameraHandler);
         }
     }
 
-    public void onBillScanned() {
-        canHandleClick = true;
+    public void onBillScanned(Uri imageUri) {
         TextRecognition textRecognition = new TextRecognition();
-        textRecognition.detectText(getApplication(), cameraHandler.getImageUri(),
+        textRecognition.detectText(getApplication(), imageUri,
                 bill -> {
                     Log.d(TAG, "Got result: " + bill.toString());
                     history.setValue(bill.toString());
