@@ -1,20 +1,23 @@
 <resources>
     <string name="app_name">Billy</string>
-    <string name="title_home">Home</string>
-    <string name="title_bill">Bill</string>
-    <string name="title_settings">Settings</string>
 
     <!-- Home Fragment -->
+    <string name="title_home">Home</string>
     <string name="scan">Scan</string>
 
     <!-- Settings Fragment -->
+    <string name="title_settings">Settings</string>
     <string name="settings_general_category_title">General</string>
     <string name="settings_user_name_preferences_title">Username (%s)</string>
     <string name="settings_user_name_dialog_title">Enter username:</string>
     <string name="settings_user_name_dialog_message">Enter username</string>
 
+    <!-- History Fragment -->
+    <string name="title_history">History</string>
+    <string name="coming_soon_title">coming soon!</string>
+
     <!-- Text recognition -->
-    <string name="ask_user_to_retry">Error: Please retry.</string>
+    <string name="ask_user_to_retry">Error: Please try again.</string>
 
     <!-- Connections -->
     <string name="connections_default_user_name_panda">Panda</string>

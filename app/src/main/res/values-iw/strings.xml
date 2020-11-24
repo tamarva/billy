@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Billy</string>
-    <string name="title_home">בית</string>
-    <string name="title_bill">חשבונית</string>
-    <string name="title_settings">הגדרות</string>
 
     <!-- Home Fragment -->
+    <string name="title_home">בית</string>
     <string name="scan">סרוק</string>
 
-    <!-- Home Fragment -->
+    <!-- Settings Fragment -->
+    <string name="title_settings">הגדרות</string>
     <string name="settings_general_category_title">כללי</string>
     <string name="settings_user_name_preferences_title">שם משתמש (%s)</string>
     <string name="settings_user_name_dialog_title">הכנס שם משתמש:</string>
     <string name="settings_user_name_dialog_message">הכנס שם משתמש</string>
+
+    <!-- History Fragment -->
+    <string name="title_history">היסטוריה</string>
+    <string name="coming_soon_title">מגיע בקרוב</string>
 
     <!-- Text recognition -->
     <string name="ask_user_to_retry">שגיאה: נסה שוב במטוטא.</string>
@@ -25,5 +28,8 @@
     <string name="connections_connection_initiated_dialog_message">אנא אשר כי הקוד זהה בשני המכשירים: %s</string>
     <string name="connections_connection_initiated_dialog_positive_button">אשר</string>
     <string name="connections_connection_initiated_dialog_negative_button">דחה</string>
+    <string name="connections_connection_success">מחובר ל-%s</string>
+    <string name="connections_connection_failed">התחברות ל-%s נכשלה</string>
+    <string name="connections_connection_lost">החיבור ל-%s נאבד</string>
 
 </resources>
