@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel viewModel;
     private TextView history;
     private DiscoveredEndpointsListAdapter adapter;
@@ -101,6 +104,8 @@ public class HomeFragment extends Fragment {
                 viewModel.onBillScanned(imageUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
+                Log.e(TAG, "onActivityResult: ", error);
+                Toast.makeText(requireContext(), "failed to crop image, please retry", Toast.LENGTH_LONG).show();
             }
         }
     }

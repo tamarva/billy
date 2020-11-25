@@ -1,17 +1,17 @@
 package com.billy.billy.text_recognition;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.billy.text_recognition.BillLine;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 
-import androidx.annotation.NonNull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BillParserImpl implements BillParser {
     private static final String TAG = BillParserImpl.class.getSimpleName();
@@ -101,7 +101,7 @@ public class BillParserImpl implements BillParser {
                             continue;
                         }
                         amount = Integer.parseInt(elem);
-                    } else if (isAlpha(elem)) {
+                    } else if (isFood(elem)) {
                         if (!checkValidity(elem)) {
                             if (checkIfTotal(elem)) {
                                 totalLine = true;
@@ -178,7 +178,7 @@ public class BillParserImpl implements BillParser {
         return str.matches("[0-9]+x*");
     }
 
-    public boolean isAlpha(@NonNull String str) {
+    public boolean isFood(@NonNull String str) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(str));
         return str.matches("^[a-zA-Z]+[a-zA-Z &\\-]*$");
     }

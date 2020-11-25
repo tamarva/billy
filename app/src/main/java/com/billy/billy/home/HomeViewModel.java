@@ -45,9 +45,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
-    static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_CONNECTION_PERMISSIONS = 2;
-    static final int REQUEST_VIBRATE_PERMISSIONS = 3;
     private static final long VIBRATION_STRENGTH = 500;
     @SuppressLint("StaticFieldLeak") private final Context applicationContext;
     private final ConnectionsService connectionService;
@@ -177,12 +175,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         // TODO: Move the onCameraButtonClicked once the camera is integrated as part of Billy.
         connectionRole = ConnectionRole.ADVERTISER;
-        connectionService.setConnectionRole(connectionRole);
-    }
-
-    public void onPhotoCanceled() {
-        canHandleClick = true;
-        connectionRole = ConnectionRole.DISCOVERER;
         connectionService.setConnectionRole(connectionRole);
     }
 
