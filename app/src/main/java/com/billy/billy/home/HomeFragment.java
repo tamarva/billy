@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
                 viewModel.onBillScanned(imageUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.e(TAG, "onActivityResult: ", error);
+                Log.e(TAG, "onActivityResult: failed to crop image ", error);
                 Toast.makeText(requireContext(), "failed to crop image, please retry", Toast.LENGTH_LONG).show();
             }
         }

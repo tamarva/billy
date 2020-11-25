@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @AutoValue
 public abstract class BillItem {
     public abstract int amount();
@@ -15,6 +17,8 @@ public abstract class BillItem {
     public abstract double total();
 
     public static BillItem create(int amount, @NonNull String name, double price, double total) {
+        checkNotNull(name);
+
         return builder()
                 .amount(amount)
                 .name(name)

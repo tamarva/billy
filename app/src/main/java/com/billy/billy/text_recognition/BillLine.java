@@ -1,4 +1,4 @@
-package com.billy.text_recognition;
+package com.billy.billy.text_recognition;
 
 import android.graphics.Rect;
 import android.util.Log;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BillLine {
+    private static final String TAG = BillLine.class.getSimpleName();
+    private static final int RANGE = 60;
     private int minY;
     private int maxY;
-    public List<FirebaseVisionText.Line> lines = new ArrayList<>();
     private Rect lineFrame;
-    private static final String TAG = BillLine.class.getSimpleName();
     private boolean isAdded;
-    public int RANGE = 60;
+    private List<FirebaseVisionText.Line> lines = new ArrayList<>();
 
     public BillLine(@NonNull FirebaseVisionText.Line line) {
         Preconditions.checkNotNull(line);
@@ -36,6 +36,10 @@ public class BillLine {
 
     public void toggleAdded() {
         isAdded = !isAdded;
+    }
+
+    public List<FirebaseVisionText.Line> getLines(){
+        return lines;
     }
 
     private int getMinY() {

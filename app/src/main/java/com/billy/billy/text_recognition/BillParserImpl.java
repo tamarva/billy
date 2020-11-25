@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.billy.text_recognition.BillLine;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
@@ -90,7 +89,7 @@ public class BillParserImpl implements BillParser {
             double price = DEFAULT_PRICE, total = DEFAULT_TOTAL;
             boolean totalLine = false, isNextTotal = false;
 
-            for (FirebaseVisionText.Line line : billLine.lines) {
+            for (FirebaseVisionText.Line line : billLine.getLines()) {
                 for (FirebaseVisionText.Element element : line.getElements()) {
                     String elem = element.getText();
                     Log.d(TAG, "parseByType: element " + elem);
