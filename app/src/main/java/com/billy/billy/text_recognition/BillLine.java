@@ -78,27 +78,30 @@ public class BillLine {
         Preconditions.checkNotNull(other);
         for (FirebaseVisionText.Line otherLine : other.lines) {
             Log.d(TAG, "addOther: line " + otherLine.getText());
-            int pos = 0;
-
-            while (pos < lines.size()) {
-                int xPos = getLineXPos(pos);
-                if (other.lineFrame.left < xPos)
-                {
-                    break;
-                }
-                ++pos;
-            }
-
-            if (pos == lines.size()) {
-                lines.add(otherLine);
-            } else {
-                addBeforeIndex(pos, otherLine);
-            }
+            addLine(other, otherLine);
         }
-
         updateFrame(other.lineFrame);
         minY = lineFrame.bottom;
         maxY = lineFrame.bottom;
+    }
+
+    private void addLine(@NonNull BillLine other, @NonNull FirebaseVisionText.Line otherLine) {
+        int pos = 0;
+
+        while (pos < lines.size()) {
+            int xPos = getLineXPos(pos);
+            if (other.lineFrame.left < xPos)
+            {
+                break;
+            }
+            ++pos;
+        }
+
+        if (pos == lines.size()) {
+            lines.add(otherLine);
+        } else {
+            addBeforeIndex(pos, otherLine);
+        }
     }
 
     private int getLineXPos(int pos) {

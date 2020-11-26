@@ -100,7 +100,7 @@ public class BillParserImpl implements BillParser {
                             continue;
                         }
                         amount = Integer.parseInt(elem);
-                    } else if (isFood(elem)) {
+                    } else if (isProduct(elem)) {
                         if (!checkValidity(elem)) {
                             if (checkIfTotal(elem)) {
                                 totalLine = true;
@@ -156,13 +156,13 @@ public class BillParserImpl implements BillParser {
         }
         if (amount == DEFAULT_AMOUNT) {
             total = price;
-            billItems.add(BillItem.create(amount, product, price, total));
+            billItems.add(BillItem.create(product, price, amount, total));
             return;
         }
         if (total == DEFAULT_TOTAL) {
-            billItems.add(BillItem.create(amount, product, getPricePerProduct(price, amount), price));
+            billItems.add(BillItem.create(product, getPricePerProduct(price, amount), amount, price));
         } else {
-            billItems.add(BillItem.create(amount, product, price, total));
+            billItems.add(BillItem.create(product, price, amount, total));
         }
     }
 
@@ -177,7 +177,7 @@ public class BillParserImpl implements BillParser {
         return str.matches("[0-9]+x*");
     }
 
-    public boolean isFood(@NonNull String str) {
+    public boolean isProduct(@NonNull String str) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(str));
         return str.matches("^[a-zA-Z]+[a-zA-Z &\\-]*$");
     }

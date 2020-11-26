@@ -8,21 +8,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @AutoValue
 public abstract class BillItem {
-    public abstract int amount();
-
     public abstract String name();
 
     public abstract double price();
 
+    public abstract int amount();
+
     public abstract double total();
 
-    public static BillItem create(int amount, @NonNull String name, double price, double total) {
+    public static BillItem create(@NonNull String name, double price, int amount, double total) {
         checkNotNull(name);
 
         return builder()
-                .amount(amount)
                 .name(name)
                 .price(price)
+                .amount(amount)
                 .total(total)
                 .build();
     }
@@ -35,11 +35,11 @@ public abstract class BillItem {
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Builder amount(int amount);
-
         public abstract Builder name(String name);
 
         public abstract Builder price(double price);
+
+        public abstract Builder amount(int amount);
 
         public abstract Builder total(double total);
 
