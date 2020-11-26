@@ -10,9 +10,14 @@ import com.google.common.base.Strings;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BillParserImpl implements BillParser {
+    public static final String TOTAL_PRICE = "total";
+    public static final String PRICE = "price";
+    public static final String TOTAL_ORDER = "total order";
     private static final String TAG = BillParserImpl.class.getSimpleName();
     private static final double DEFAULT_PRICE = 1.00;
     private static final int DEFAULT_AMOUNT = 1;
@@ -81,66 +86,104 @@ public class BillParserImpl implements BillParser {
     private List<BillItem> parseByType(@NonNull List<BillLine> updatedBillLines) {
         Preconditions.checkNotNull(updatedBillLines);
         List<BillItem> billItems = new ArrayList<>();
-        double sumProduct = 0, totalOrder = 0;
+        Map<Double, String> map = new HashMap<>();
+        double sumOfPrices = 0, totalOrder = 0;
 
         for (BillLine billLine : updatedBillLines) {
             int amount = DEFAULT_AMOUNT;
-            String product = "";
+            StringBuilder product = new StringBuilder();
             double price = DEFAULT_PRICE, total = DEFAULT_TOTAL;
-            boolean totalLine = false, isNextTotal = false;
+            boolean isTotalOrderPrice = false, isTotalPriceInLine = false;
 
             for (FirebaseVisionText.Line line : billLine.getLines()) {
                 for (FirebaseVisionText.Element element : line.getElements()) {
+                    map.clear();
                     String elem = element.getText();
                     Log.d(TAG, "parseByType: element " + elem);
 
                     if (isNumeric(elem)) {
-                        if (elem.contains("x")) {
-                            amount = Integer.parseInt(elem.substring(0, elem.length() - 1));
-                            continue;
-                        }
-                        amount = Integer.parseInt(elem);
+                        amount = getAmount(elem);
                     } else if (isProduct(elem)) {
                         if (!checkValidity(elem)) {
                             if (checkIfTotal(elem)) {
-                                totalLine = true;
+                                isTotalOrderPrice = true;
                                 continue;
                             }
-                            product += elem + " ";
+                            product.append(elem).append(" ");
                         }
                     } else {
-                        if (!isCurrentlySign(elem)) {
-                            if (totalLine) {
-                                totalOrder = parsePriceToDouble(elem);
-                                continue;
-                            }
-                            double tempTotal = parsePriceToDouble(elem);
-                            if (isNextTotal) {
-                                if (tempTotal != FAILURE) {
-                                    total = tempTotal;
-                                }
-                            } else {
-                                if (tempTotal != FAILURE) {
-                                    price = tempTotal;
-                                    isNextTotal = true;
-                                }
+                        Map<Double, String> myMap = findPrice(elem, isTotalOrderPrice, isTotalPriceInLine, map);
+                        if (!myMap.isEmpty()) {
+                            Map.Entry<Double, String> entry = myMap.entrySet().iterator().next();
+                            String value = entry.getValue();
+                            Log.d(TAG, "parseByType: " + entry.getKey());
+                            switch (value) {
+                                case TOTAL_ORDER:
+                                    totalOrder = entry.getKey();
+                                    break;
+                                case TOTAL_PRICE:
+                                    total = entry.getKey();
+                                    break;
+                                case PRICE:
+                                    price = entry.getKey();
+                                    isTotalPriceInLine = true;
+                                    break;
                             }
                         }
                     }
                 }
-
             }
-            checkBillType(product, price, amount, total, billItems);
-            if (total == DEFAULT_TOTAL && price != DEFAULT_PRICE) {
-                sumProduct += price;
-            } else {
-                sumProduct += total;
-            }
+            checkBillType(product.toString(), price, amount, total, billItems);
+            sumOfPrices = getPricesOfProducts(sumOfPrices, price, total);
         }
-        if (totalOrder != sumProduct) {
+        if (totalOrder != sumOfPrices) {
             return new ArrayList<>();
         }
         return billItems;
+    }
+
+    private int getAmount(@NonNull String elem) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(elem));
+        int amount;
+        if (elem.contains("x")) {
+            amount = Integer.parseInt(elem.substring(0, elem.length() - 1));
+            return amount;
+        }
+        amount = Integer.parseInt(elem);
+        return amount;
+    }
+
+    private double getPricesOfProducts(double sumProduct, double price, double total) {
+        if (total == DEFAULT_TOTAL && price != DEFAULT_PRICE) {
+            sumProduct += price;
+        } else {
+            sumProduct += total;
+        }
+        return sumProduct;
+    }
+
+    private Map<Double, String> findPrice(@NonNull String elem, boolean isTotalOrderPrice, boolean isTotalPriceInLine, @NonNull Map<Double, String> map) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(elem));
+        Preconditions.checkNotNull(map);
+        if (!isCurrentlySign(elem)) {
+            if (isTotalOrderPrice) {
+                map.put(parsePriceToDouble(elem), TOTAL_ORDER);
+                return map;
+            }
+            double tempTotal = parsePriceToDouble(elem);
+            if (isTotalPriceInLine) {
+                if (tempTotal != FAILURE) {
+                    map.put(tempTotal, TOTAL_PRICE);
+                    return map;
+                }
+            } else {
+                if (tempTotal != FAILURE) {
+                    map.put(tempTotal, PRICE);
+                    return map;
+                }
+            }
+        }
+        return new HashMap<>();
     }
 
     private boolean checkIfTotal(@NonNull String elem) {
