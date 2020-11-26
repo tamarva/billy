@@ -1,25 +1,25 @@
 package com.billy.billy.home;
 
-import static com.google.common.base.Preconditions.checkState;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.billy.billy.R;
-import com.billy.billy.camera.CameraHandler;
 import com.billy.billy.connections.ConnectionLifecycleListener;
 import com.billy.billy.connections.ConnectionRole;
 import com.billy.billy.connections.ConnectionsService;
@@ -35,23 +35,20 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import static com.google.common.base.Preconditions.checkState;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
-    static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_CONNECTION_PERMISSIONS = 2;
-    static final int REQUEST_VIBRATE_PERMISSIONS = 3;
     private static final long VIBRATION_STRENGTH = 500;
     @SuppressLint("StaticFieldLeak") private final Context applicationContext;
     private final ConnectionsService connectionService;
-    private final CameraHandler cameraHandler;
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> history = new MutableLiveData<>("EMPTY");
@@ -61,7 +58,6 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(Application application) {
         super(application);
         applicationContext = application;
-        cameraHandler = new CameraHandler(REQUEST_TAKE_PHOTO);
         connectionService = new ConnectionsService(applicationContext, createConnectionLifecycleListener(),
                 createEndpointDiscoveryListener(), createPayloadListener());
         connectionService.setConnectionRole(connectionRole);
@@ -169,17 +165,9 @@ public class HomeViewModel extends AndroidViewModel {
         return discoveredEndpoints;
     }
 
-    public void onCameraButtonClicked() {
-        if (canHandleClick) {
-            canHandleClick = false;
-            action.setValue(cameraHandler);
-        }
-    }
-
-    public void onBillScanned() {
-        canHandleClick = true;
+    public void onBillScanned(Uri imageUri) {
         TextRecognition textRecognition = new TextRecognition();
-        textRecognition.detectText(getApplication(), cameraHandler.getImageUri(),
+        textRecognition.detectText(getApplication(), imageUri,
                 bill -> {
                     Log.d(TAG, "Got result: " + bill.toString());
                     history.setValue(bill.toString());
@@ -187,12 +175,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         // TODO: Move the onCameraButtonClicked once the camera is integrated as part of Billy.
         connectionRole = ConnectionRole.ADVERTISER;
-        connectionService.setConnectionRole(connectionRole);
-    }
-
-    public void onPhotoCanceled() {
-        canHandleClick = true;
-        connectionRole = ConnectionRole.DISCOVERER;
         connectionService.setConnectionRole(connectionRole);
     }
 

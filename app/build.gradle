@@ -82,4 +82,8 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-core:17.5.0'
     implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
+
+    // Image Cropper
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
 }

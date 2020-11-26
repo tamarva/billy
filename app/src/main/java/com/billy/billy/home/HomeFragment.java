@@ -1,17 +1,15 @@
 package com.billy.billy.home;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.billy.billy.R;
-import com.billy.billy.connections.Endpoint;
-import com.google.common.base.Preconditions;
+import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -22,7 +20,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.billy.billy.R;
+import com.billy.billy.connections.Endpoint;
+import com.google.common.base.Preconditions;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFragment extends Fragment {
+    private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel viewModel;
     private TextView history;
     private DiscoveredEndpointsListAdapter adapter;
@@ -45,11 +51,16 @@ public class HomeFragment extends Fragment {
         adapter = new DiscoveredEndpointsListAdapter();
         recyclerView.setAdapter(adapter);
 
-        rootView.findViewById(R.id.home_fragment_scan_bill_button)
-                .setOnClickListener(view -> viewModel.onCameraButtonClicked());
-
         history = rootView.findViewById(R.id.home_fragment_history);
         history.setOnClickListener(view -> viewModel.tomer());
+
+        rootView.findViewById(R.id.home_fragment_scan_bill_button)
+                .setOnClickListener(view -> onChooseFile());
+    }
+
+    private void onChooseFile() {
+        CropImage.activity()
+                .start(requireContext(), this);
     }
 
     @Override
@@ -86,14 +97,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == HomeViewModel.REQUEST_TAKE_PHOTO) {
-            switch (resultCode) {
-                case Activity.RESULT_OK:
-                    viewModel.onBillScanned();
-                    break;
-                case Activity.RESULT_CANCELED:
-                    viewModel.onPhotoCanceled();
-                    break;
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri imageUri = result.getUri();
+                viewModel.onBillScanned(imageUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Log.e(TAG, "onActivityResult: failed to crop image ", error);
+                Toast.makeText(requireContext(), "failed to crop image, please retry", Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -1,8 +1,10 @@
 package com.billy.billy.text_recognition;
 
+import androidx.annotation.NonNull;
+
 import com.google.auto.value.AutoValue;
 
-import androidx.annotation.NonNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @AutoValue
 public abstract class BillItem {
@@ -12,11 +14,16 @@ public abstract class BillItem {
 
     public abstract int amount();
 
-    public static BillItem create(@NonNull String name, double price, int amount) {
+    public abstract double total();
+
+    public static BillItem create(@NonNull String name, double price, int amount, double total) {
+        checkNotNull(name);
+
         return builder()
                 .name(name)
                 .price(price)
                 .amount(amount)
+                .total(total)
                 .build();
     }
 
@@ -33,6 +40,8 @@ public abstract class BillItem {
         public abstract Builder price(double price);
 
         public abstract Builder amount(int amount);
+
+        public abstract Builder total(double total);
 
         public abstract BillItem build();
     }
