@@ -28,10 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
 import com.billy.billy.email.EmailFragment;
-import com.google.common.base.Preconditions;
-
-import com.billy.billy.R;
-import com.billy.billy.connections.Endpoint;
 import com.billy.billy.text_recognition.BillItem;
 import com.google.common.base.Preconditions;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -40,6 +36,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
+    public static final String EMAIL_KEY = "email_key";
     private HomeViewModel viewModel;
     private TextView history;
     private BillItemsListAdapter billItemAdapter;
@@ -87,15 +84,15 @@ public class HomeFragment extends Fragment {
 
     private void sendEmailButton(View rootView, Button emailButton){
         View billView = rootView.findViewById(R.id.home_fragment_bill_items_rv);
-//        if (billView.getVisibility() == View.VISIBLE){ // todo undo "//" after fix recycle
+        if (billView.getVisibility() == View.VISIBLE){
         emailButton.setVisibility(View.VISIBLE);
         emailButton.setOnClickListener(view -> sendEmail());
-        // }
+        }
     }
 
     private void sendEmail() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        if (sp.getString("email_key", "").equals("")){
+        if (sp.getString(EMAIL_KEY, "").equals("")){
             Fragment emailFragment = new EmailFragment();
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
