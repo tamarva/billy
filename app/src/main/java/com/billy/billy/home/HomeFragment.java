@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
+import com.billy.billy.text_recognition.BillItem;
 import com.google.common.base.Preconditions;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -31,6 +32,7 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel viewModel;
     private TextView history;
+    private BillItemsListAdapter billItemAdapter;
     private DiscoveredEndpointsListAdapter adapter;
 
     @Override
@@ -47,9 +49,12 @@ public class HomeFragment extends Fragment {
 
     private void setUpViews(@NonNull View rootView) {
         RecyclerView recyclerView = rootView.findViewById(R.id.home_fragment_discovered_devices_rv);
+        RecyclerView recyclerViewBill = rootView.findViewById(R.id.home_fragment_bill_items_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new DiscoveredEndpointsListAdapter();
         recyclerView.setAdapter(adapter);
+        billItemAdapter = new BillItemsListAdapter();
+        recyclerViewBill.setAdapter(billItemAdapter);
 
         history = rootView.findViewById(R.id.home_fragment_history);
         history.setOnClickListener(view -> viewModel.tomer());
@@ -91,6 +96,19 @@ public class HomeFragment extends Fragment {
         viewModel.getDiscoveredEndpoints().observe(getViewLifecycleOwner(), discoveredEndpoints -> {
             adapter.submitList(discoveredEndpoints);
             adapter.notifyDataSetChanged();
+        });
+    }
+
+    private void observeBillItems() {
+        Log.d(TAG, "observeBillItems");
+        viewModel.getMyBill().observe(getViewLifecycleOwner(), bill -> {
+            if (!bill.billItems().isEmpty()){
+                billItemAdapter.submitList(bill.billItems());
+                billItemAdapter.notifyDataSetChanged();
+            }
+            else{
+                Toast.makeText(requireContext(),"please re-scan bill", Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -172,6 +190,43 @@ public class HomeFragment extends Fragment {
             Endpoint discoveredEndpoint = getItem(position);
             if (discoveredEndpoint != null) {
                 holder.bindTo(discoveredEndpoint);
+            }
+        }
+    }
+    private class BillItemsListAdapter
+            extends ListAdapter<BillItem, BillItemsListAdapter.BillItemViewHolder> {
+        private class BillItemViewHolder extends RecyclerView.ViewHolder {
+            private final TextView name;
+
+            public BillItemViewHolder(@NonNull View itemView) {
+                super(itemView);
+                name = itemView.findViewById(R.id.discovered_endpoint_item_name);
+            }
+
+            public void bindTo(@NonNull BillItem billItem) {
+                Preconditions.checkNotNull(billItem);
+                name.setText(billItem.name());
+//                name.setOnClickListener(view -> viewModel.onBillItemClicked(billItem));
+            }
+        }
+
+        protected BillItemsListAdapter() {
+            super(BillItem.DIFF_CALLBACK);
+        }
+
+        @NonNull
+        @Override
+        public BillItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.bill_item, parent, false);
+            return new BillItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull BillItemViewHolder holder, int position) {
+            BillItem billItem = getItem(position);
+            if (billItem != null) {
+                holder.bindTo(billItem);
             }
         }
     }
