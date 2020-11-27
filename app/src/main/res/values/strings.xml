@@ -4,6 +4,7 @@
     <!-- Home Fragment -->
     <string name="title_home">Home</string>
     <string name="scan">Scan</string>
+    <string name="error_msg">Please re-scan bill</string>
 
     <!-- Settings Fragment -->
     <string name="title_settings">Settings</string>

@@ -27,6 +27,8 @@ import com.billy.billy.connections.ConnectionsUtils;
 import com.billy.billy.connections.Endpoint;
 import com.billy.billy.connections.EndpointDiscoveryListener;
 import com.billy.billy.connections.PayloadListener;
+import com.billy.billy.text_recognition.Bill;
+import com.billy.billy.text_recognition.BillItem;
 import com.billy.billy.text_recognition.TextRecognition;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
@@ -52,8 +54,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> history = new MutableLiveData<>("EMPTY");
+    private final MutableLiveData<Bill> myBill = new MutableLiveData<>();
     private ConnectionRole connectionRole = ConnectionRole.DISCOVERER;
-    private boolean canHandleClick = true;
 
     public HomeViewModel(Application application) {
         super(application);
@@ -165,12 +167,17 @@ public class HomeViewModel extends AndroidViewModel {
         return discoveredEndpoints;
     }
 
+    public LiveData<Bill> getBillLiveData() {
+        return myBill;
+    }
+
     public void onBillScanned(Uri imageUri) {
         TextRecognition textRecognition = new TextRecognition();
         textRecognition.detectText(getApplication(), imageUri,
                 bill -> {
                     Log.d(TAG, "Got result: " + bill.toString());
                     history.setValue(bill.toString());
+                    myBill.setValue(bill);
                 });
 
         // TODO: Move the onCameraButtonClicked once the camera is integrated as part of Billy.
@@ -226,6 +233,10 @@ public class HomeViewModel extends AndroidViewModel {
         checkState(connectionRole == ConnectionRole.DISCOVERER);
 
         connectionService.requestConnectionToDiscoveredEndpoint(discoveredEndpoint);
+    }
+
+    public void onBillItemClicked(BillItem billItem){
+        Log.d(TAG, "onBillItemClicked: ");
     }
 
     public void tomer() {
