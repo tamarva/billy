@@ -1,6 +1,9 @@
 package com.billy.billy.text_recognition;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.google.auto.value.AutoValue;
 
@@ -45,4 +48,17 @@ public abstract class BillItem {
 
         public abstract BillItem build();
     }
+
+    public static DiffUtil.ItemCallback<BillItem> DIFF_CALLBACK = new DiffUtil.ItemCallback<BillItem>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull BillItem oldItem, @NonNull BillItem newItem) {
+            return oldItem.equals(newItem);
+        }
+
+        @SuppressLint("DiffUtilEquals")
+        @Override
+        public boolean areContentsTheSame(@NonNull BillItem oldItem, @NonNull BillItem newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
 }

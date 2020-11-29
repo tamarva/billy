@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
+import com.billy.billy.text_recognition.BillItem;
 import com.google.common.base.Preconditions;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -31,7 +32,8 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel viewModel;
     private TextView history;
-    private DiscoveredEndpointsListAdapter adapter;
+    private BillItemsListAdapter billItemsAdapter;
+    private DiscoveredEndpointsListAdapter discoveredEndpointsListAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,10 +48,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpViews(@NonNull View rootView) {
-        RecyclerView recyclerView = rootView.findViewById(R.id.home_fragment_discovered_devices_rv);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new DiscoveredEndpointsListAdapter();
-        recyclerView.setAdapter(adapter);
+        RecyclerView recyclerViewEndpoints = rootView.findViewById(R.id.home_fragment_discovered_devices_rv);
+        RecyclerView recyclerViewBill = rootView.findViewById(R.id.home_fragment_bill_items_rv);
+        recyclerViewEndpoints.setLayoutManager(new LinearLayoutManager(requireContext()));
+        discoveredEndpointsListAdapter = new DiscoveredEndpointsListAdapter();
+        recyclerViewEndpoints.setAdapter(discoveredEndpointsListAdapter);
+        billItemsAdapter = new BillItemsListAdapter();
+        recyclerViewBill.setAdapter(billItemsAdapter);
 
         history = rootView.findViewById(R.id.home_fragment_history);
         history.setOnClickListener(view -> viewModel.tomer());
@@ -73,6 +78,7 @@ public class HomeFragment extends Fragment {
         observeActions();
         observeHistory();
         observeDiscoveredEndpoints();
+        observeBillItems();
     }
 
     private void observeActions() {
@@ -89,8 +95,21 @@ public class HomeFragment extends Fragment {
 
     private void observeDiscoveredEndpoints() {
         viewModel.getDiscoveredEndpoints().observe(getViewLifecycleOwner(), discoveredEndpoints -> {
-            adapter.submitList(discoveredEndpoints);
-            adapter.notifyDataSetChanged();
+            discoveredEndpointsListAdapter.submitList(discoveredEndpoints);
+            discoveredEndpointsListAdapter.notifyDataSetChanged();
+        });
+    }
+
+    private void observeBillItems() {
+        viewModel.getBillLiveData().observe(getViewLifecycleOwner(), bill -> {
+            Log.d(TAG, "observeBillItems");
+            if (!bill.billItems().isEmpty()){
+                billItemsAdapter.submitList(bill.billItems());
+                billItemsAdapter.notifyDataSetChanged();
+            }
+            else{
+                Toast.makeText(requireContext(), R.string.error_msg, Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -104,7 +123,7 @@ public class HomeFragment extends Fragment {
                 viewModel.onBillScanned(imageUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.e(TAG, "onActivityResult: failed to crop image ", error);
+                Log.e(TAG, "onActivityResult: failed to crop image", error);
                 Toast.makeText(requireContext(), "failed to crop image, please retry", Toast.LENGTH_LONG).show();
             }
         }
@@ -172,6 +191,45 @@ public class HomeFragment extends Fragment {
             Endpoint discoveredEndpoint = getItem(position);
             if (discoveredEndpoint != null) {
                 holder.bindTo(discoveredEndpoint);
+            }
+        }
+    }
+
+    private class BillItemsListAdapter
+            extends ListAdapter<BillItem, BillItemsListAdapter.BillItemViewHolder> {
+        private class BillItemViewHolder extends RecyclerView.ViewHolder {
+            private final TextView billItem;
+
+            public BillItemViewHolder(@NonNull View itemView) {
+                super(itemView);
+                billItem = itemView.findViewById(R.id.bill_item_title);
+            }
+
+            public void bindTo(@NonNull BillItem billItem) {
+                Preconditions.checkNotNull(billItem);
+                String billItemText = billItem.name() + billItem.amount() + billItem.price() + billItem.total();
+                this.billItem.setText(billItemText);
+                this.billItem.setOnClickListener(view -> viewModel.onBillItemClicked(billItem));
+            }
+        }
+
+        protected BillItemsListAdapter() {
+            super(BillItem.DIFF_CALLBACK);
+        }
+
+        @NonNull
+        @Override
+        public BillItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.bill_item, parent, false);
+            return new BillItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull BillItemViewHolder holder, int position) {
+            BillItem billItem = getItem(position);
+            if (billItem != null) {
+                holder.bindTo(billItem);
             }
         }
     }
