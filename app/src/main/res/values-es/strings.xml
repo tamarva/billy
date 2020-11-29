@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Billy</string>
+
+    <!-- Home Fragment -->
+    <string name="title_home">Hogar</string>
+    <string name="scan">Escanear</string>
+
+    <!-- Settings Fragment -->
+    <string name="title_settings">Configuraciones</string>
+    <string name="settings_general_category_title">General</string>
+    <string name="settings_user_name_preferences_title">Nombre de usuario (% s)</string>
+    <string name="settings_user_name_dialog_title">Introduzca su nombre de usuario</string>
+    <string name="settings_user_name_dialog_message">Introduzca su nombre de usuario: </string>
+
+    <!-- History Fragment -->
+    <string name="title_history">Historia</string>
+    <string name="history_coming_soon_title">próximamente!</string>
+
+    <!-- Text recognition -->
+    <string name="ask_user_to_retry">>Error: vuelva a intentarlo.</string>
+
+    <!-- Connections -->
+    <string name="connections_default_user_name_panda">Panda</string>
+    <string name="connections_default_user_name_parrot">Lora</string>
+    <string name="connections_default_user_name_lemur">Lémur</string>
+    <string name="connections_connection_initiated_dialog_title">Aceptar conexión con% s?</string>
+    <string name="connections_connection_initiated_dialog_message">Confirme que el código coincida en ambos dispositivos:% s</string>
+    <string name="connections_connection_initiated_dialog_positive_button">Aprobar</string>
+    <string name="connections_connection_initiated_dialog_negative_button">Negar</string>
+    <string name="connections_connection_success">Connected to %s</string>
+    <string name="connections_connection_failed">Couldn\'t connect to %s</string>
+    <string name="connections_connection_lost">Connection to endpoint %s lost</string>
+
+</resources>
