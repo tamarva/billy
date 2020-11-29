@@ -1,4 +1,4 @@
-package com.billy.billy.bill;
+package com.billy.billy.history;
 
 import android.app.Application;
 
