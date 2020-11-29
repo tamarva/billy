@@ -1,5 +1,7 @@
 package com.billy.billy.home;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.billy.billy.R;
+import com.billy.billy.connections.Endpoint;
+import com.billy.billy.text_recognition.BillItem;
+import com.google.common.base.Preconditions;
+import com.theartofdev.edmodo.cropper.CropImage;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,14 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.billy.billy.R;
-import com.billy.billy.connections.Endpoint;
-import com.billy.billy.text_recognition.BillItem;
-import com.google.common.base.Preconditions;
-import com.theartofdev.edmodo.cropper.CropImage;
-
-import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
@@ -102,14 +102,13 @@ public class HomeFragment extends Fragment {
 
     private void observeBillItems() {
         viewModel.getBillLiveData().observe(getViewLifecycleOwner(), bill -> {
-            Log.d(TAG, "observeBillItems");
-            if (!bill.billItems().isEmpty()){
-                billItemsAdapter.submitList(bill.billItems());
-                billItemsAdapter.notifyDataSetChanged();
-            }
-            else{
+            if (bill.isEmpty()){
                 Toast.makeText(requireContext(), R.string.error_msg, Toast.LENGTH_LONG).show();
+                return;
             }
+
+            billItemsAdapter.submitList(bill.billItems());
+            billItemsAdapter.notifyDataSetChanged();
         });
     }
 

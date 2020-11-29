@@ -1,23 +1,19 @@
 package com.billy.billy.home;
 
-import android.Manifest;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.ConnectionLifecycleListener;
@@ -37,24 +33,23 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkState;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
     static final int REQUEST_CONNECTION_PERMISSIONS = 2;
-    private static final long VIBRATION_STRENGTH = 500;
     @SuppressLint("StaticFieldLeak") private final Context applicationContext;
     private final ConnectionsService connectionService;
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> history = new MutableLiveData<>("EMPTY");
-    private final MutableLiveData<Bill> myBill = new MutableLiveData<>();
+    private final MutableLiveData<Bill> billLiveData = new MutableLiveData<>();
     private ConnectionRole connectionRole = ConnectionRole.DISCOVERER;
 
     public HomeViewModel(Application application) {
@@ -168,7 +163,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<Bill> getBillLiveData() {
-        return myBill;
+        return billLiveData;
     }
 
     public void onBillScanned(Uri imageUri) {
@@ -177,29 +172,17 @@ public class HomeViewModel extends AndroidViewModel {
                 bill -> {
                     Log.d(TAG, "Got result: " + bill.toString());
                     history.setValue(bill.toString());
-                    myBill.setValue(bill);
+                    billLiveData.setValue(bill);
                 });
 
-        // TODO: Move the onCameraButtonClicked once the camera is integrated as part of Billy.
         connectionRole = ConnectionRole.ADVERTISER;
         connectionService.setConnectionRole(connectionRole);
     }
 
-    private void vibratePhone() {
-        Vibrator vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
-        if (hasPermissions(applicationContext, Manifest.permission.VIBRATE) && vibrator.hasVibrator()) {
-            vibrator.vibrate(VIBRATION_STRENGTH);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T pickRandomElem(Collection<T> collection) {
-        return (T) collection.toArray()[new Random().nextInt(collection.size())];
-    }
-
     public void onStart() {
         if (!hasPermissions(applicationContext, getRequiredPermissions())) {
-            action.setValue(fragment -> fragment.requestPermissions(getRequiredPermissions(), REQUEST_CONNECTION_PERMISSIONS));
+            action.setValue(fragment ->
+                    fragment.requestPermissions(getRequiredPermissions(), REQUEST_CONNECTION_PERMISSIONS));
         }
         connectionService.setConnectionRole(connectionRole);
     }

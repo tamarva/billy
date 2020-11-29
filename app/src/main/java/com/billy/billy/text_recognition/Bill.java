@@ -11,6 +11,10 @@ import androidx.annotation.NonNull;
 public abstract class Bill {
     public abstract List<BillItem> billItems();
 
+    public boolean isEmpty() {
+        return billItems().isEmpty();
+    }
+
     public static Bill createEmpty() {
         return builder().build();
     }
@@ -23,7 +27,7 @@ public abstract class Bill {
 
     public static Builder builder() {
         return new AutoValue_Bill.Builder()
-                .billItems(new ArrayList<BillItem>());
+                .billItems(new ArrayList<>());
     }
 
     public abstract Builder toBuilder();

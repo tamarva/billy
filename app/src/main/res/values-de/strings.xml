@@ -25,12 +25,12 @@
     <string name="connections_default_user_name_panda">Panda</string>
     <string name="connections_default_user_name_parrot">Parrot</string>
     <string name="connections_default_user_name_lemur">Lemur</string>
-    <string name="connections_connection_initiated_dialog_title">Verbindung zu akzeptieren</string>
+    <string name="connections_connection_initiated_dialog_title">Verbindung zu akzeptieren %s</string>
     <string name="connections_connection_initiated_dialog_message">Bestätigen Sie, dass der Code auf beiden Geräten übereinstimmt:</string>
     <string name="connections_connection_initiated_dialog_positive_button">Akzeptieren</string>
     <string name="connections_connection_initiated_dialog_negative_button">Verweigern</string>
-    <string name="connections_connection_success">Verbunden</string>
-    <string name="connections_connection_failed">Verbindung zu% s konnte nicht hergestellt werden</string>
-    <string name="connections_connection_lost">Verbindung zum Endpunkt% s unterbrochen</string>
+    <string name="connections_connection_success">Verbunden %s</string>
+    <string name="connections_connection_failed">Verbindung zu %s konnte nicht hergestellt werden</string>
+    <string name="connections_connection_lost">Verbindung zum Endpunkt %s unterbrochen</string>
 
 </resources>

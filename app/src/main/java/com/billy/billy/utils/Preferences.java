@@ -18,7 +18,6 @@ public final class Preferences {
 
     }
 
-
     /**
      * Get a 128-bit string representation of an UUID.
      */

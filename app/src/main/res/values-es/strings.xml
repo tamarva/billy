@@ -25,7 +25,7 @@
     <string name="connections_default_user_name_panda">Panda</string>
     <string name="connections_default_user_name_parrot">Lora</string>
     <string name="connections_default_user_name_lemur">Lémur</string>
-    <string name="connections_connection_initiated_dialog_title">Aceptar conexión con% s?</string>
+    <string name="connections_connection_initiated_dialog_title">Aceptar conexión con %s?</string>
     <string name="connections_connection_initiated_dialog_message">Confirme que el código coincida en ambos dispositivos:% s</string>
     <string name="connections_connection_initiated_dialog_positive_button">Aprobar</string>
     <string name="connections_connection_initiated_dialog_negative_button">Negar</string>
