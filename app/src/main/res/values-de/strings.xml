@@ -26,7 +26,7 @@
     <string name="connections_default_user_name_parrot">Parrot</string>
     <string name="connections_default_user_name_lemur">Lemur</string>
     <string name="connections_connection_initiated_dialog_title">Verbindung zu akzeptieren %s</string>
-    <string name="connections_connection_initiated_dialog_message">Bestätigen Sie, dass der Code auf beiden Geräten übereinstimmt:</string>
+    <string name="connections_connection_initiated_dialog_message">Bestätigen Sie, dass der Code auf beiden Geräten übereinstimmt: %s</string>
     <string name="connections_connection_initiated_dialog_positive_button">Akzeptieren</string>
     <string name="connections_connection_initiated_dialog_negative_button">Verweigern</string>
     <string name="connections_connection_success">Verbunden %s</string>

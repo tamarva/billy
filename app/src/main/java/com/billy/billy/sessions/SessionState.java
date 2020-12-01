@@ -80,7 +80,7 @@ public abstract class SessionState implements Serializable {
     public SessionState withNewParticipant(@NonNull String newParticipant) {
         checkNotNull(newParticipant);
 
-        List<String> currParticipants = getParticipants();
+        ArrayList<String> currParticipants = new ArrayList<>(getParticipants());
         if (currParticipants.contains(newParticipant)) {
             Log.e(TAG, "Got an already added participant.");
             return this;
@@ -95,7 +95,7 @@ public abstract class SessionState implements Serializable {
     public SessionState withRemoveParticipant(@NonNull String newParticipant) {
         checkNotNull(newParticipant);
 
-        List<String> currParticipants = getParticipants();
+        ArrayList<String> currParticipants = new ArrayList<>(getParticipants());
         if (!currParticipants.contains(newParticipant)) {
             Log.e(TAG, "Got an unknown participant.");
             return this;
@@ -116,7 +116,7 @@ public abstract class SessionState implements Serializable {
             return this;
         }
 
-        List<SessionItem> sessionItems = getSessionItems();
+        ArrayList<SessionItem> sessionItems = new ArrayList<>(getSessionItems());
         SessionItem currSessionItem = sessionItems.get(selection.getSelectedSessionItemIndex());
         SessionItem newSessionItem = currSessionItem.withSelection(selection);
         sessionItems.set(selection.getSelectedSessionItemIndex(), newSessionItem);

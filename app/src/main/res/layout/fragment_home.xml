@@ -4,6 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/home_fragment_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:id="@+id/home_fragment_recycler_view_wrapper"
         android:layout_width="match_parent"
@@ -30,7 +39,7 @@
 
     <Button
         android:id="@+id/home_fragment_scan_bill_button"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:background="@drawable/home_fragment_scan_bill_button_background"
@@ -40,6 +49,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_fragment_recycler_view_wrapper" />
+        app:layout_constraintTop_toBottomOf="@id/home_fragment_recycler_view_wrapper"
+        app:layout_constraintWidth_max="340dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

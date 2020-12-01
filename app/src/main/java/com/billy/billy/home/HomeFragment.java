@@ -74,6 +74,8 @@ public class HomeFragment extends Fragment {
         observeActions();
         observeDiscoveredEndpoints();
         observeBillItems();
+        observeShouldShowScanButton();
+        observeShouldShowProgressBar();
     }
 
     private void observeActions() {
@@ -95,6 +97,20 @@ public class HomeFragment extends Fragment {
         viewModel.getSessionStateLiveData().observe(getViewLifecycleOwner(), sessionState -> {
             sessionStateAdapter.submitList(sessionState.getSessionItems());
             sessionStateAdapter.notifyDataSetChanged();
+        });
+    }
+
+    private void observeShouldShowScanButton() {
+        viewModel.getButtonCaptionStringResLiveData().observe(getViewLifecycleOwner(), captionStringRes -> {
+            getView().<TextView>findViewById(R.id.home_fragment_scan_bill_button)
+                    .setText(captionStringRes);
+        });
+    }
+
+    private void observeShouldShowProgressBar() {
+        viewModel.getShouldShowProgressBarLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
+            getView().findViewById(R.id.home_fragment_progress_bar)
+                    .setVisibility(shouldShow ? View.VISIBLE : View.GONE);
         });
     }
 
@@ -122,11 +138,10 @@ public class HomeFragment extends Fragment {
             for (int grantResult : grantResults) {
                 if (grantResult == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(requireContext(), R.string.error_msg, Toast.LENGTH_LONG).show();
-                    getActivity().finish();
+                    requireActivity().finish();
                     return;
                 }
             }
-            getActivity().recreate();
         }
     }
 

@@ -54,6 +54,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<SessionState> sessionStateLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> buttonCaptionStringResLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> shouldShowProgressBarLiveData = new MutableLiveData<>(true);
     private ConnectionRole connectionRole = ConnectionRole.DISCOVERER;
 
     public HomeViewModel(Application application) {
@@ -62,6 +64,8 @@ public class HomeViewModel extends AndroidViewModel {
         connectionService = new ConnectionsService(applicationContext, createConnectionLifecycleListener(),
                 createEndpointDiscoveryListener(), createPayloadListener());
         connectionService.setConnectionRole(connectionRole);
+
+        buttonCaptionStringResLiveData.setValue(R.string.scan);
     }
 
     private ConnectionLifecycleListener createConnectionLifecycleListener() {
@@ -73,7 +77,7 @@ public class HomeViewModel extends AndroidViewModel {
                     new AlertDialog.Builder(fragment.requireActivity(), R.style.BillyAlertDialog)
                             .setTitle(applicationContext.getString(R.string.connections_connection_initiated_dialog_title,
                                     endpoint.getName()))
-                            .setMessage(applicationContext.getString(R.string.connections_connection_initiated_dialog_title,
+                            .setMessage(applicationContext.getString(R.string.connections_connection_initiated_dialog_message,
                                     connectionInfo.getAuthenticationToken()))
                             .setPositiveButton(R.string.connections_connection_initiated_dialog_positive_button,
                                     (DialogInterface dialog, int which) -> connectionService.acceptConnection(endpoint))
@@ -96,6 +100,7 @@ public class HomeViewModel extends AndroidViewModel {
                 String message =
                         applicationContext.getString(R.string.connections_connection_success, endpoint.getName());
                 Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show();
+                buttonCaptionStringResLiveData.setValue(R.string.email);
                 if (connectionRole.equals(ConnectionRole.ADVERTISER)) {
                     syncNewEndpoint(endpoint);
                 }
@@ -106,7 +111,10 @@ public class HomeViewModel extends AndroidViewModel {
                 String message =
                         applicationContext.getString(R.string.connections_connection_lost, endpoint.getName());
                 Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show();
-                // TODO: If discoverer and discoveredEndpoints.getValue() empty show dialog asking if want to start advertising.
+
+                if (connectionRole == ConnectionRole.DISCOVERER) {
+                    buttonCaptionStringResLiveData.setValue(R.string.scan);
+                }
             }
         };
     }
@@ -142,6 +150,10 @@ public class HomeViewModel extends AndroidViewModel {
                 List<Endpoint> currentList = discoveredEndpoints.getValue();
                 currentList.add(endpoint);
                 discoveredEndpoints.setValue(currentList);
+
+                if (connectionRole == ConnectionRole.DISCOVERER && currentList.size() > 0) {
+                    shouldShowProgressBarLiveData.setValue(false);
+                }
             }
 
             @Override
@@ -149,6 +161,10 @@ public class HomeViewModel extends AndroidViewModel {
                 List<Endpoint> currentList = discoveredEndpoints.getValue();
                 currentList.remove(endpoint);
                 discoveredEndpoints.setValue(currentList);
+
+                if (connectionRole == ConnectionRole.DISCOVERER && currentList.size() == 0) {
+                    shouldShowProgressBarLiveData.setValue(true);
+                }
             }
         };
     }
@@ -187,13 +203,25 @@ public class HomeViewModel extends AndroidViewModel {
         return sessionStateLiveData;
     }
 
-    public void onBillScanned(Uri imageUri) {
+    public LiveData<Integer> getButtonCaptionStringResLiveData() {
+        return buttonCaptionStringResLiveData;
+    }
+
+    public LiveData<Boolean> getShouldShowProgressBarLiveData() {
+        return shouldShowProgressBarLiveData;
+    }
+
+    public void onBillScanned(@NonNull Uri imageUri) {
+        shouldShowProgressBarLiveData.setValue(true);
+
         TextRecognition textRecognition = new TextRecognition();
         textRecognition.detectText(getApplication(), imageUri,
                 bill -> {
                     Log.d(TAG, "Got result: " + bill.toString());
                     List<String> participants = singletonList(getOwnName());
                     sessionStateLiveData.setValue(SessionState.create(participants, bill));
+                    shouldShowProgressBarLiveData.setValue(false);
+                    buttonCaptionStringResLiveData.setValue(R.string.email);
                 });
 
         connectionRole = ConnectionRole.ADVERTISER;

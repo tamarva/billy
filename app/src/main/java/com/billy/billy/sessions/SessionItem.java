@@ -2,6 +2,7 @@ package com.billy.billy.sessions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public abstract class SessionItem {
     public SessionItem withNewOrderingParticipant(@NonNull String newOrderingParticipant) {
         checkNotNull(newOrderingParticipant);
 
-        List<String> currOrdering = getOrderingParticipants();
+        ArrayList<String> currOrdering = new ArrayList<>(getOrderingParticipants());
         if (currOrdering.contains(newOrderingParticipant)) {
             Log.e(TAG, "Got an already added endpoint.");
             return this;
@@ -69,7 +70,7 @@ public abstract class SessionItem {
     public SessionItem withRemoveOrderingParticipant(@NonNull String oldOrderingParticipant) {
         checkNotNull(oldOrderingParticipant);
 
-        List<String> currOrdering = getOrderingParticipants();
+        ArrayList<String> currOrdering = new ArrayList<>(getOrderingParticipants());
         if (!currOrdering.contains(oldOrderingParticipant)) {
             Log.e(TAG, "Got an unknown endpoint.");
             return this;
