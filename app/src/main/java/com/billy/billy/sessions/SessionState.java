@@ -16,6 +16,7 @@ import android.util.Log;
 import com.billy.billy.R;
 import com.billy.billy.text_recognition.Bill;
 import com.billy.billy.text_recognition.BillItem;
+import com.billy.billy.utils.Preferences;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Strings;
 
@@ -135,28 +136,46 @@ public abstract class SessionState implements Serializable {
 
     public abstract Builder toBuilder();
 
+    private String normalizeName(@NonNull String fullName) {
+        return fullName.split(Preferences.Connections.USER_ID_SEPARATOR)[1];
+    }
+
     public String getSummary(@NonNull Context context, @NonNull String ownName) {
         checkNotNull(context);
         checkArgument(!Strings.isNullOrEmpty(ownName));
 
         String participantsFormat = context.getString(R.string.participants_format);
         for (String participant : getParticipants()) {
-            participantsFormat += participant + "\n";
+            if (!participant.equals(ownName)) {
+                participantsFormat += normalizeName(participant) + "\n";
+            }
         }
 
         String billFormat = context.getString(R.string.bill_format);
+        String billDescriptionFormat = "%s:\t%.1f\tx%s\t%.1f\n";
         for (BillItem billItem : getBill().billItems()) {
-            billFormat += billItem + "\n";
+            billFormat += String.format(billDescriptionFormat, billItem.name(), billItem.price(), billItem.amount(),
+                    billItem.total());
         }
 
         String youChoseFormat = context.getString(R.string.you_chose_format);
         for (SessionItem sessionItem : getSessionItems()) {
             if (sessionItem.getOrderingParticipants().contains(ownName)) {
-                youChoseFormat += sessionItem + "\n";
+                String curr = sessionItem.getItemName();
+                if (sessionItem.getOrderingParticipants().size() > 1) {
+                    curr += "\t(+";
+                    for (String participant : sessionItem.getOrderingParticipants()) {
+                        if (!participant.equals(ownName)) {
+                            curr += normalizeName(participant) + "\n";
+                        }
+                    }
+                    curr += ")";
+                }
+                youChoseFormat += curr + "\n";
             }
         }
 
-        return participantsFormat + billFormat + youChoseFormat;
+        return participantsFormat + "\n" + billFormat + "\n" + youChoseFormat;
     }
 
     @AutoValue.Builder
