@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
     private void sendEmail() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, );
+        sendIntent.putExtra(Intent.EXTRA_TEXT, viewModel.getSessionSummary());
         sendIntent.setType("text/plain");
 
         Intent shareIntent = Intent.createChooser(sendIntent, getString(R.string.share));

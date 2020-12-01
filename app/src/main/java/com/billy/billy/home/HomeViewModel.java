@@ -3,8 +3,12 @@ package com.billy.billy.home;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Collections.singletonList;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
@@ -297,6 +301,21 @@ public class HomeViewModel extends AndroidViewModel {
     public boolean shouldScanOnClick() {
         Integer currentCaptionStringRes = buttonCaptionStringResLiveData.getValue();
         return currentCaptionStringRes != null && currentCaptionStringRes == R.string.scan;
+    }
+
+    private String getCurrentDate() {
+        Date now = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+        return df.format(now);
+    }
+
+    public String getSessionSummary() {
+        String sessionSummary = applicationContext.getString(R.string.summary_prefix, getCurrentDate());
+        SessionState sessionState = sessionStateLiveData.getValue();
+        if (sessionState != null) {
+            sessionSummary += sessionState.getSummary(applicationContext, getOwnName());
+        }
+        return sessionSummary;
     }
 
     public interface Action {

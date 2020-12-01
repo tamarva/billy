@@ -10,8 +10,10 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.billy.billy.R;
 import com.billy.billy.text_recognition.Bill;
 import com.billy.billy.text_recognition.BillItem;
 import com.google.auto.value.AutoValue;
@@ -130,6 +132,30 @@ public abstract class SessionState implements Serializable {
     }
 
     public abstract Builder toBuilder();
+
+    public String getSummary(@NonNull Context context, @NonNull String ownName) {
+        checkNotNull(context);
+        checkArgument(!Strings.isNullOrEmpty(ownName));
+
+        String participantsFormat = context.getString(R.string.participants_format);
+        for (String participant : getParticipants()) {
+            participantsFormat += participant + "\n";
+        }
+
+        String billFormat = context.getString(R.string.bill_format);
+        for (BillItem billItem : getBill().billItems()) {
+            billFormat += billItem + "\n";
+        }
+
+        String youChoseFormat = context.getString(R.string.you_chose_format);
+        for (SessionItem sessionItem : getSessionItems()) {
+            if (sessionItem.getOrderingParticipants().contains(ownName)) {
+                youChoseFormat += sessionItem + "\n";
+            }
+        }
+
+        return participantsFormat + billFormat + youChoseFormat;
+    }
 
     @AutoValue.Builder
     public abstract static class Builder {
