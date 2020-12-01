@@ -310,12 +310,12 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public String getSessionSummary() {
-        String sessionSummary = applicationContext.getString(R.string.summary_prefix, getCurrentDate());
         SessionState sessionState = sessionStateLiveData.getValue();
+        String sessionSummary = "";
         if (sessionState != null) {
-            sessionSummary += sessionState.getSummary(applicationContext, getOwnName());
+            sessionSummary = sessionState.getSummary(applicationContext, getOwnName());
         }
-        return sessionSummary;
+        return applicationContext.getString(R.string.summary_prefix, getCurrentDate(), sessionSummary);
     }
 
     public interface Action {

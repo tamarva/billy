@@ -58,7 +58,9 @@ public abstract class SessionState implements Serializable {
         billItems.sort((billItem1, billItem2) -> billItem1.name().compareTo(billItem2.name()));
 
         for (BillItem billItem : billItems) {
-            sessionItems.add(SessionItem.create(billItem.name(), billItem.price()));
+            for (int i = 0; i < billItem.amount(); ++i) {
+                sessionItems.add(SessionItem.create(billItem.name(), billItem.price()));
+            }
         }
 
         return sessionItems;

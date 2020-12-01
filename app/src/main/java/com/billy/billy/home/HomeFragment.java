@@ -48,10 +48,12 @@ public class HomeFragment extends Fragment {
 
     private void setUpViews(@NonNull View rootView) {
         RecyclerView recyclerViewEndpoints = rootView.findViewById(R.id.home_fragment_discovered_devices_rv);
-        RecyclerView recyclerViewBill = rootView.findViewById(R.id.home_fragment_bill_items_rv);
         recyclerViewEndpoints.setLayoutManager(new LinearLayoutManager(requireContext()));
         discoveredEndpointsListAdapter = new DiscoveredEndpointsListAdapter();
         recyclerViewEndpoints.setAdapter(discoveredEndpointsListAdapter);
+
+        RecyclerView recyclerViewBill = rootView.findViewById(R.id.home_fragment_bill_items_rv);
+        recyclerViewBill.setLayoutManager(new LinearLayoutManager(requireContext()));
         sessionStateAdapter = new SessionStateAdapter();
         recyclerViewBill.setAdapter(sessionStateAdapter);
 
@@ -90,7 +92,7 @@ public class HomeFragment extends Fragment {
         observeActions();
         observeDiscoveredEndpoints();
         observeBillItems();
-        observeShouldShowScanButton();
+        observeCurrentSessionStatus();
         observeShouldShowProgressBar();
     }
 
@@ -116,10 +118,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void observeShouldShowScanButton() {
+    private void observeCurrentSessionStatus() {
         viewModel.getButtonCaptionStringResLiveData().observe(getViewLifecycleOwner(), captionStringRes -> {
             getView().<TextView>findViewById(R.id.home_fragment_main_bill_button)
                     .setText(captionStringRes);
+
+            if (captionStringRes == R.string.scan) {
+                getView().findViewById(R.id.home_fragment_discovered_devices_rv)
+                        .setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.home_fragment_bill_items_rv)
+                        .setVisibility(View.INVISIBLE);
+            } else {
+                getView().findViewById(R.id.home_fragment_discovered_devices_rv)
+                        .setVisibility(View.INVISIBLE);
+                getView().findViewById(R.id.home_fragment_bill_items_rv)
+                        .setVisibility(View.VISIBLE);
+            }
         });
     }
 
@@ -227,7 +241,7 @@ public class HomeFragment extends Fragment {
                 String billItemText = sessionItem.getItemName() + " $" + sessionItem.getItemPrice();
                 int numParticipantsSelected = sessionItem.getOrderingParticipants().size();
                 if (numParticipantsSelected > 0) {
-                    billItemText += "(" + numParticipantsSelected + ")";
+                    billItemText += "\t(" + numParticipantsSelected + ")";
                 }
                 sessionItemTextView.setText(billItemText);
                 sessionItemTextView.setOnClickListener(view -> viewModel.onBillItemClicked(position));

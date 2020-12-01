@@ -6,7 +6,7 @@
     <string name="title_home">Home</string>
     <string name="scan">Scan</string>
     <string name="error_msg">Billy requires permissions to run…</string>
-    <string name="summary_prefix">Here\'s a summary of your bill from %s:\n\nHave a pleasant day!\n</string>
+    <string name="summary_prefix">Here\'s a summary of your bill from %s:\n%s\nHave a pleasant day!\n</string>
     <string name="participants_format">You ate with:\n</string>
     <string name="bill_format">The bill was:\n</string>
     <string name="you_chose_format">You selected the following items:\n</string>
