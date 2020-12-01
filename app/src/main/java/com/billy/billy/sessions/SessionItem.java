@@ -10,6 +10,8 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -23,6 +25,10 @@ public abstract class SessionItem {
     public abstract double getItemPrice();
 
     public abstract List<String> getOrderingParticipants();
+
+    public static TypeAdapter<SessionItem> typeAdapter(Gson gson) {
+        return new AutoValue_SessionItem.GsonTypeAdapter(gson);
+    }
 
     public static SessionItem create(@NonNull String itemName, double itemPrice) {
         checkNotNull(itemName);

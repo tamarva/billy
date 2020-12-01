@@ -7,6 +7,8 @@ import java.io.Serializable;
 import android.annotation.SuppressLint;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -20,6 +22,10 @@ public abstract class BillItem implements Serializable {
     public abstract int amount();
 
     public abstract double total();
+
+    public static TypeAdapter<BillItem> typeAdapter(Gson gson) {
+        return new AutoValue_BillItem.GsonTypeAdapter(gson);
+    }
 
     public static BillItem create(@NonNull String name, double price, int amount, double total) {
         checkNotNull(name);

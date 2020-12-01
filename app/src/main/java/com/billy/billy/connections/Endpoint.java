@@ -10,6 +10,8 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -26,6 +28,10 @@ public abstract class Endpoint implements Serializable {
     public abstract String getName();
 
     public abstract String getFullName();
+
+    public static TypeAdapter<Endpoint> typeAdapter(Gson gson) {
+        return new AutoValue_Endpoint.GsonTypeAdapter(gson);
+    }
 
     public static Endpoint create(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(endpointId));

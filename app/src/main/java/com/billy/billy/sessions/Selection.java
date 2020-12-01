@@ -6,6 +6,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.annotation.Nonnull;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 @AutoValue
 public abstract class Selection {
@@ -17,6 +19,10 @@ public abstract class Selection {
      * {@code true} if the user is toggling the selection on, {@code false} is they're toggling it off.
      */
     public abstract boolean getIsSelecting();
+
+    public static TypeAdapter<Selection> typeAdapter(Gson gson) {
+        return new AutoValue_Selection.GsonTypeAdapter(gson);
+    }
 
     public static Selection create(@Nonnull String selectingParticipant, int selectedSessionItemIndex,
                                    boolean isSelecting) {

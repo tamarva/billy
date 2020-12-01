@@ -8,6 +8,8 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -25,6 +27,10 @@ public abstract class ConnectionModel {
     public abstract Strategy strategy();
 
     public abstract String name();
+
+    public static TypeAdapter<ConnectionModel> typeAdapter(Gson gson) {
+        return new AutoValue_ConnectionModel.GsonTypeAdapter(gson);
+    }
 
     @VisibleForTesting
     public static ConnectionModel create(@NonNull String serviceId, int apiVersion, @NonNull Strategy strategy,

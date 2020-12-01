@@ -5,6 +5,7 @@ import static java.util.Collections.singletonList;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +30,11 @@ import com.billy.billy.connections.ConnectionsUtils;
 import com.billy.billy.connections.Endpoint;
 import com.billy.billy.connections.EndpointDiscoveryListener;
 import com.billy.billy.connections.PayloadListener;
+import com.billy.billy.sessions.MyAdapterFactory;
 import com.billy.billy.sessions.Selection;
 import com.billy.billy.sessions.SessionState;
+import com.billy.billy.text_recognition.Bill;
+import com.billy.billy.text_recognition.BillItem;
 import com.billy.billy.text_recognition.TextRecognition;
 import com.billy.billy.utils.Preferences;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -40,6 +44,7 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -53,7 +58,9 @@ public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
     static final int REQUEST_CONNECTION_PERMISSIONS = 2;
     @SuppressLint("StaticFieldLeak") private final Context applicationContext;
-    private final Gson gson = new Gson();
+    Gson gson = new GsonBuilder()
+            .registerTypeAdapterFactory(MyAdapterFactory.create())
+            .create();
     private final ConnectionsService connectionService;
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
