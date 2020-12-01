@@ -25,6 +25,8 @@ public abstract class Endpoint implements Serializable {
 
     public abstract String getName();
 
+    public abstract String getFullName();
+
     public static Endpoint create(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(endpointId));
         Preconditions.checkNotNull(discoveredEndpointInfo);
@@ -46,15 +48,17 @@ public abstract class Endpoint implements Serializable {
         String[] namePrefix = endpointName.split(Preferences.Connections.USER_ID_SEPARATOR);
         Preconditions.checkState(namePrefix.length == 2);
 
-        return create(endpointId, namePrefix[0], namePrefix[1]);
+        return create(endpointId, namePrefix[0], namePrefix[1], endpointName);
     }
 
-    public static Endpoint create(@NonNull String endpointId, @NonNull String namePrefix, @NonNull String name) {
+    public static Endpoint create(@NonNull String endpointId, @NonNull String namePrefix, @NonNull String name,
+                                  @NonNull String fullName) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(endpointId));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(namePrefix));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(fullName));
 
-        return new AutoValue_Endpoint(endpointId, namePrefix, name);
+        return new AutoValue_Endpoint(endpointId, namePrefix, name, fullName);
     }
 
     public static DiffUtil.ItemCallback<Endpoint> DIFF_CALLBACK = new DiffUtil.ItemCallback<Endpoint>() {

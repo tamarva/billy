@@ -1,5 +1,6 @@
 package com.billy.billy.text_recognition;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import com.google.auto.value.AutoValue;
 import androidx.annotation.NonNull;
 
 @AutoValue
-public abstract class Bill {
+public abstract class Bill implements Serializable {
     public abstract List<BillItem> billItems();
 
     public boolean isEmpty() {

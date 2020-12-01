@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
-import com.billy.billy.text_recognition.BillItem;
+import com.billy.billy.sessions.SessionItem;
 import com.google.common.base.Preconditions;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -31,8 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel viewModel;
-    private TextView history;
-    private BillItemsListAdapter billItemsAdapter;
+    private SessionStateAdapter sessionStateAdapter;
     private DiscoveredEndpointsListAdapter discoveredEndpointsListAdapter;
 
     @Override
@@ -53,17 +52,14 @@ public class HomeFragment extends Fragment {
         recyclerViewEndpoints.setLayoutManager(new LinearLayoutManager(requireContext()));
         discoveredEndpointsListAdapter = new DiscoveredEndpointsListAdapter();
         recyclerViewEndpoints.setAdapter(discoveredEndpointsListAdapter);
-        billItemsAdapter = new BillItemsListAdapter();
-        recyclerViewBill.setAdapter(billItemsAdapter);
-
-        history = rootView.findViewById(R.id.home_fragment_history);
-        history.setOnClickListener(view -> viewModel.tomer());
+        sessionStateAdapter = new SessionStateAdapter();
+        recyclerViewBill.setAdapter(sessionStateAdapter);
 
         rootView.findViewById(R.id.home_fragment_scan_bill_button)
-                .setOnClickListener(view -> onChooseFile());
+                .setOnClickListener(view -> scanBill());
     }
 
-    private void onChooseFile() {
+    private void scanBill() {
         CropImage.activity()
                 .start(requireContext(), this);
     }
@@ -76,7 +72,6 @@ public class HomeFragment extends Fragment {
 
     private void observeUpdatesFromViewModel() {
         observeActions();
-        observeHistory();
         observeDiscoveredEndpoints();
         observeBillItems();
     }
@@ -89,10 +84,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void observeHistory() {
-        viewModel.getHistory().observe(getViewLifecycleOwner(), newHistory -> history.setText(newHistory));
-    }
-
     private void observeDiscoveredEndpoints() {
         viewModel.getDiscoveredEndpoints().observe(getViewLifecycleOwner(), discoveredEndpoints -> {
             discoveredEndpointsListAdapter.submitList(discoveredEndpoints);
@@ -101,14 +92,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void observeBillItems() {
-        viewModel.getBillLiveData().observe(getViewLifecycleOwner(), bill -> {
-            if (bill.isEmpty()){
-                Toast.makeText(requireContext(), R.string.error_msg, Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            billItemsAdapter.submitList(bill.billItems());
-            billItemsAdapter.notifyDataSetChanged();
+        viewModel.getSessionStateLiveData().observe(getViewLifecycleOwner(), sessionState -> {
+            sessionStateAdapter.submitList(sessionState.getSessionItems());
+            sessionStateAdapter.notifyDataSetChanged();
         });
     }
 
@@ -135,6 +121,7 @@ public class HomeFragment extends Fragment {
         if (requestCode == HomeViewModel.REQUEST_CONNECTION_PERMISSIONS) {
             for (int grantResult : grantResults) {
                 if (grantResult == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(requireContext(), R.string.error_msg, Toast.LENGTH_LONG).show();
                     getActivity().finish();
                     return;
                 }
@@ -194,41 +181,46 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private class BillItemsListAdapter
-            extends ListAdapter<BillItem, BillItemsListAdapter.BillItemViewHolder> {
-        private class BillItemViewHolder extends RecyclerView.ViewHolder {
-            private final TextView billItem;
+    private class SessionStateAdapter extends ListAdapter<SessionItem, SessionStateAdapter.SessionStateViewHolder> {
+        private class SessionStateViewHolder extends RecyclerView.ViewHolder {
+            private final TextView sessionItemTextView;
 
-            public BillItemViewHolder(@NonNull View itemView) {
+            public SessionStateViewHolder(@NonNull View itemView) {
                 super(itemView);
-                billItem = itemView.findViewById(R.id.bill_item_title);
+                sessionItemTextView = itemView.findViewById(R.id.bill_item_title);
             }
 
-            public void bindTo(@NonNull BillItem billItem) {
-                Preconditions.checkNotNull(billItem);
-                String billItemText = billItem.name() + billItem.amount() + billItem.price() + billItem.total();
-                this.billItem.setText(billItemText);
-                this.billItem.setOnClickListener(view -> viewModel.onBillItemClicked(billItem));
+            public void bindTo(int position, @NonNull SessionItem sessionItem) {
+                Preconditions.checkNotNull(sessionItem);
+
+                String billItemText = sessionItem.getItemName() + " $" + sessionItem.getItemPrice();
+                int numParticipantsSelected = sessionItem.getOrderingParticipants().size();
+                if (numParticipantsSelected > 0) {
+                    billItemText += "(" + numParticipantsSelected + ")";
+                }
+                sessionItemTextView.setText(billItemText);
+                sessionItemTextView.setOnClickListener(view -> viewModel.onBillItemClicked(position));
+                sessionItemTextView.setOnLongClickListener(view -> viewModel.onBillItemLongClicked(position));
             }
         }
 
-        protected BillItemsListAdapter() {
-            super(BillItem.DIFF_CALLBACK);
+        protected SessionStateAdapter() {
+            super(SessionItem.DIFF_CALLBACK);
         }
 
         @NonNull
         @Override
-        public BillItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public SessionStateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.bill_item, parent, false);
-            return new BillItemViewHolder(view);
+            return new SessionStateViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull BillItemViewHolder holder, int position) {
-            BillItem billItem = getItem(position);
-            if (billItem != null) {
-                holder.bindTo(billItem);
+        public void onBindViewHolder(@NonNull SessionStateViewHolder holder, int position) {
+            SessionItem sessionItem = getItem(position);
+            if (sessionItem != null) {
+                holder.bindTo(position, sessionItem);
             }
         }
     }

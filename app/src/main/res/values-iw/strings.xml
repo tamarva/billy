@@ -5,7 +5,7 @@
     <!-- Home Fragment -->
     <string name="title_home">בית</string>
     <string name="scan">סרוק</string>
-    <string name="error_msg">בבקשה תסרוק מחדש את החשבונית</string>
+    <string name="error_msg">בילי זקוק להרשאות כדי לעבוד</string>
 
     <!-- Settings Fragment -->
     <string name="title_settings">הגדרות</string>
