@@ -60,6 +60,9 @@ dependencies {
     // For loading and tinting drawables on older versions of the platform:
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
 
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.6'
+
     // Android Nearby Connections
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
 
