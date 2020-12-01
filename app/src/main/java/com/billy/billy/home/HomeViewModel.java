@@ -1,23 +1,21 @@
 package com.billy.billy.home;
 
-import android.Manifest;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Collections.singletonList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.billy.billy.R;
 import com.billy.billy.connections.ConnectionLifecycleListener;
@@ -27,34 +25,37 @@ import com.billy.billy.connections.ConnectionsUtils;
 import com.billy.billy.connections.Endpoint;
 import com.billy.billy.connections.EndpointDiscoveryListener;
 import com.billy.billy.connections.PayloadListener;
-import com.billy.billy.text_recognition.Bill;
-import com.billy.billy.text_recognition.BillItem;
+import com.billy.billy.sessions.Selection;
+import com.billy.billy.sessions.SessionState;
 import com.billy.billy.text_recognition.TextRecognition;
+import com.billy.billy.utils.Preferences;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
+import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkState;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
     static final int REQUEST_CONNECTION_PERMISSIONS = 2;
-    private static final long VIBRATION_STRENGTH = 500;
     @SuppressLint("StaticFieldLeak") private final Context applicationContext;
+    private final Gson gson = new Gson();
     private final ConnectionsService connectionService;
     private final MutableLiveData<Action> action = new MutableLiveData<>();
     private final MutableLiveData<List<Endpoint>> discoveredEndpoints = new MutableLiveData<>(new ArrayList<>());
-    private final MutableLiveData<String> history = new MutableLiveData<>("EMPTY");
-    private final MutableLiveData<Bill> myBill = new MutableLiveData<>();
+    private final MutableLiveData<SessionState> sessionStateLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> buttonCaptionStringResLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> shouldShowProgressBarLiveData = new MutableLiveData<>(true);
     private ConnectionRole connectionRole = ConnectionRole.DISCOVERER;
 
     public HomeViewModel(Application application) {
@@ -63,6 +64,8 @@ public class HomeViewModel extends AndroidViewModel {
         connectionService = new ConnectionsService(applicationContext, createConnectionLifecycleListener(),
                 createEndpointDiscoveryListener(), createPayloadListener());
         connectionService.setConnectionRole(connectionRole);
+
+        buttonCaptionStringResLiveData.setValue(R.string.scan);
     }
 
     private ConnectionLifecycleListener createConnectionLifecycleListener() {
@@ -74,7 +77,7 @@ public class HomeViewModel extends AndroidViewModel {
                     new AlertDialog.Builder(fragment.requireActivity(), R.style.BillyAlertDialog)
                             .setTitle(applicationContext.getString(R.string.connections_connection_initiated_dialog_title,
                                     endpoint.getName()))
-                            .setMessage(applicationContext.getString(R.string.connections_connection_initiated_dialog_title,
+                            .setMessage(applicationContext.getString(R.string.connections_connection_initiated_dialog_message,
                                     connectionInfo.getAuthenticationToken()))
                             .setPositiveButton(R.string.connections_connection_initiated_dialog_positive_button,
                                     (DialogInterface dialog, int which) -> connectionService.acceptConnection(endpoint))
@@ -97,6 +100,7 @@ public class HomeViewModel extends AndroidViewModel {
                 String message =
                         applicationContext.getString(R.string.connections_connection_success, endpoint.getName());
                 Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show();
+                buttonCaptionStringResLiveData.setValue(R.string.email);
                 if (connectionRole.equals(ConnectionRole.ADVERTISER)) {
                     syncNewEndpoint(endpoint);
                 }
@@ -107,13 +111,36 @@ public class HomeViewModel extends AndroidViewModel {
                 String message =
                         applicationContext.getString(R.string.connections_connection_lost, endpoint.getName());
                 Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show();
-                // TODO: If discoverer and discoveredEndpoints.getValue() empty show dialog asking if want to start advertising.
+
+                if (connectionRole == ConnectionRole.DISCOVERER) {
+                    buttonCaptionStringResLiveData.setValue(R.string.scan);
+                }
             }
         };
     }
 
     private void syncNewEndpoint(@NonNull Endpoint endpoint) {
-        connectionService.sendString(history.getValue(), Collections.singleton(endpoint));
+        SessionState currentSessionState = sessionStateLiveData.getValue();
+        if (currentSessionState == null) {
+            Log.e(TAG, "Couldn't update that a new endpoint was added - sessionState is null.");
+            return;
+        }
+
+        SessionState newSessionState = currentSessionState.withNewParticipant(endpoint.getFullName());
+        sessionStateLiveData.setValue(newSessionState);
+        connectionService.sendString(gson.toJson(newSessionState));
+    }
+
+    private void syncNewSelection(@NonNull Selection selection) {
+        SessionState currentSessionState = sessionStateLiveData.getValue();
+        if (currentSessionState == null) {
+            Log.e(TAG, "Couldn't sync new selection - sessionState is null.");
+            return;
+        }
+
+        SessionState newSessionState = currentSessionState.withSelection(selection);
+        sessionStateLiveData.setValue(newSessionState);
+        connectionService.sendString(gson.toJson(newSessionState));
     }
 
     private EndpointDiscoveryListener createEndpointDiscoveryListener() {
@@ -123,6 +150,10 @@ public class HomeViewModel extends AndroidViewModel {
                 List<Endpoint> currentList = discoveredEndpoints.getValue();
                 currentList.add(endpoint);
                 discoveredEndpoints.setValue(currentList);
+
+                if (connectionRole == ConnectionRole.DISCOVERER && currentList.size() > 0) {
+                    shouldShowProgressBarLiveData.setValue(false);
+                }
             }
 
             @Override
@@ -130,6 +161,10 @@ public class HomeViewModel extends AndroidViewModel {
                 List<Endpoint> currentList = discoveredEndpoints.getValue();
                 currentList.remove(endpoint);
                 discoveredEndpoints.setValue(currentList);
+
+                if (connectionRole == ConnectionRole.DISCOVERER && currentList.size() == 0) {
+                    shouldShowProgressBarLiveData.setValue(true);
+                }
             }
         };
     }
@@ -139,12 +174,13 @@ public class HomeViewModel extends AndroidViewModel {
             @Override
             public void onPayloadReceived(@NonNull Endpoint endpoint, @NonNull Payload payload) {
                 if (connectionRole.equals(ConnectionRole.ADVERTISER)) {
-                    String currentHistory = history.getValue();
-                    currentHistory += " " + new String(payload.asBytes());
-                    history.setValue(currentHistory);
-                    connectionService.sendString(currentHistory);
+                    String json = new String(payload.asBytes());
+                    Selection selection = gson.fromJson(json, Selection.class);
+                    syncNewSelection(selection);
                 } else {
-                    history.setValue(new String(payload.asBytes()));
+                    String json = new String(payload.asBytes());
+                    SessionState sessionState = gson.fromJson(json, SessionState.class);
+                    sessionStateLiveData.setValue(sessionState);
                 }
             }
 
@@ -159,47 +195,43 @@ public class HomeViewModel extends AndroidViewModel {
         return action;
     }
 
-    public LiveData<String> getHistory() {
-        return history;
-    }
-
     public LiveData<List<Endpoint>> getDiscoveredEndpoints() {
         return discoveredEndpoints;
     }
 
-    public LiveData<Bill> getBillLiveData() {
-        return myBill;
+    public LiveData<SessionState> getSessionStateLiveData() {
+        return sessionStateLiveData;
     }
 
-    public void onBillScanned(Uri imageUri) {
+    public LiveData<Integer> getButtonCaptionStringResLiveData() {
+        return buttonCaptionStringResLiveData;
+    }
+
+    public LiveData<Boolean> getShouldShowProgressBarLiveData() {
+        return shouldShowProgressBarLiveData;
+    }
+
+    public void onBillScanned(@NonNull Uri imageUri) {
+        shouldShowProgressBarLiveData.setValue(true);
+
         TextRecognition textRecognition = new TextRecognition();
         textRecognition.detectText(getApplication(), imageUri,
                 bill -> {
                     Log.d(TAG, "Got result: " + bill.toString());
-                    history.setValue(bill.toString());
-                    myBill.setValue(bill);
+                    List<String> participants = singletonList(getOwnName());
+                    sessionStateLiveData.setValue(SessionState.create(participants, bill));
+                    shouldShowProgressBarLiveData.setValue(false);
+                    buttonCaptionStringResLiveData.setValue(R.string.email);
                 });
 
-        // TODO: Move the onCameraButtonClicked once the camera is integrated as part of Billy.
         connectionRole = ConnectionRole.ADVERTISER;
         connectionService.setConnectionRole(connectionRole);
     }
 
-    private void vibratePhone() {
-        Vibrator vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
-        if (hasPermissions(applicationContext, Manifest.permission.VIBRATE) && vibrator.hasVibrator()) {
-            vibrator.vibrate(VIBRATION_STRENGTH);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T pickRandomElem(Collection<T> collection) {
-        return (T) collection.toArray()[new Random().nextInt(collection.size())];
-    }
-
     public void onStart() {
         if (!hasPermissions(applicationContext, getRequiredPermissions())) {
-            action.setValue(fragment -> fragment.requestPermissions(getRequiredPermissions(), REQUEST_CONNECTION_PERMISSIONS));
+            action.setValue(fragment ->
+                    fragment.requestPermissions(getRequiredPermissions(), REQUEST_CONNECTION_PERMISSIONS));
         }
         connectionService.setConnectionRole(connectionRole);
     }
@@ -229,25 +261,37 @@ public class HomeViewModel extends AndroidViewModel {
         return true;
     }
 
-    public void onDiscoveredEndpointClicked(Endpoint discoveredEndpoint) {
+    public void onDiscoveredEndpointClicked(@Nonnull Endpoint discoveredEndpoint) {
         checkState(connectionRole == ConnectionRole.DISCOVERER);
 
         connectionService.requestConnectionToDiscoveredEndpoint(discoveredEndpoint);
     }
 
-    public void onBillItemClicked(BillItem billItem){
-        Log.d(TAG, "onBillItemClicked: ");
+    public void onBillItemClicked(int index) {
+        Log.d(TAG, "onBillItemClicked");
+
+        selectItem(index, true);
     }
 
-    public void tomer() {
-        if (connectionRole.equals(ConnectionRole.ADVERTISER)) {
-            String currentHistory = history.getValue();
-            currentHistory += " ADV";
-            history.setValue(currentHistory);
-            connectionService.sendString(currentHistory);
+    public boolean onBillItemLongClicked(int index) {
+        Log.d(TAG, "onBillItemLongClicked");
+
+        selectItem(index, false);
+        return true;
+    }
+
+    private void selectItem(int index, boolean isSelecting) {
+        Selection selection = Selection.create(getOwnName(), index, isSelecting);
+
+        if (connectionRole == ConnectionRole.ADVERTISER) {
+            syncNewSelection(selection);
         } else {
-            connectionService.sendString("DIS");
+            connectionService.sendString(gson.toJson(selection));
         }
+    }
+
+    private String getOwnName() {
+        return Preferences.Connections.getUserUniqueID(applicationContext);
     }
 
     public interface Action {

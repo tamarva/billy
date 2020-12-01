@@ -15,6 +15,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:textSize="22sp"
+        android:padding="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         tools:text="Tomer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

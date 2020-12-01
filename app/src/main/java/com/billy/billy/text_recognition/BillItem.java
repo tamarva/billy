@@ -1,16 +1,18 @@
 package com.billy.billy.text_recognition;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.Serializable;
+
 import android.annotation.SuppressLint;
+
+import com.google.auto.value.AutoValue;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.google.auto.value.AutoValue;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @AutoValue
-public abstract class BillItem {
+public abstract class BillItem implements Serializable {
     public abstract String name();
 
     public abstract double price();

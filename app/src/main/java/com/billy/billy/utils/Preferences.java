@@ -18,7 +18,6 @@ public final class Preferences {
 
     }
 
-
     /**
      * Get a 128-bit string representation of an UUID.
      */
@@ -27,7 +26,7 @@ public final class Preferences {
     }
 
     public static class Connections {
-        public static final String USER_ID_SEPARATOR = "$$$";  // todo tomer split this class!
+        public static final String USER_ID_SEPARATOR = "@@@";  // todo tomer split this class!
         private static final String FILE_NAME = "connections_preferences_file";
         private static final String USER_NAME_PREFIX_KEY = "user_name_prefix_key";
         private static final String USER_NAME_KEY = "user_name_key";

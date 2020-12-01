@@ -2,15 +2,16 @@
 <resources>
     <color name="billy_blue_primary">#030C43</color>
     <color name="billy_green_primary">#037B41</color>
+    <color name="billy_black_primary">#000000</color>
     <color name="billy_white_primary">#FFFFFF</color>
 
     <color name="colorPrimary">@color/billy_green_primary</color>
     <color name="colorPrimaryDark">@color/billy_blue_primary</color>
-    <color name="colorAccent">@color/billy_white_primary</color>
+    <color name="colorAccent">@color/billy_black_primary</color>
 
     <!-- Alert Dialog -->
-    <color name="alert_dialog_background_color">@color/billy_blue_primary</color>
-    <color name="alert_dialog_text_color">@color/billy_white_primary</color>
+    <color name="alert_dialog_background_color">@color/billy_white_primary</color>
+    <color name="alert_dialog_text_color">@color/billy_black_primary</color>
 
     <!-- Home Fragment -->
     <color name="home_fragment_scan_bill_button_background_color">@color/billy_green_primary</color>

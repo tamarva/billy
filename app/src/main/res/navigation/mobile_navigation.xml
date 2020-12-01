@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.billy.billy.bill.HistoryFragment"
+        android:name="com.billy.billy.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history">
         <action

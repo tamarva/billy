@@ -10,7 +10,7 @@
     <!-- Settings Fragment -->
     <string name="title_settings">Settings</string>
     <string name="settings_general_category_title">General</string>
-    <string name="settings_user_name_preferences_title">Имя пользователя (% s)</string>
+    <string name="settings_user_name_preferences_title">Имя пользователя (%s)</string>
     <string name="settings_user_name_dialog_title">Enter username:</string>
     <string name="settings_user_name_dialog_message">Введите имя пользователя</string>
 

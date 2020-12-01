@@ -10,7 +10,7 @@
     <!-- Settings Fragment -->
     <string name="title_settings">Configuraciones</string>
     <string name="settings_general_category_title">General</string>
-    <string name="settings_user_name_preferences_title">Nombre de usuario (% s)</string>
+    <string name="settings_user_name_preferences_title">Nombre de usuario (%s)</string>
     <string name="settings_user_name_dialog_title">Introduzca su nombre de usuario</string>
     <string name="settings_user_name_dialog_message">Introduzca su nombre de usuario: </string>
 
@@ -25,8 +25,8 @@
     <string name="connections_default_user_name_panda">Panda</string>
     <string name="connections_default_user_name_parrot">Lora</string>
     <string name="connections_default_user_name_lemur">Lémur</string>
-    <string name="connections_connection_initiated_dialog_title">Aceptar conexión con% s?</string>
-    <string name="connections_connection_initiated_dialog_message">Confirme que el código coincida en ambos dispositivos:% s</string>
+    <string name="connections_connection_initiated_dialog_title">Aceptar conexión con %s?</string>
+    <string name="connections_connection_initiated_dialog_message">Confirme que el código coincida en ambos dispositivos: %s</string>
     <string name="connections_connection_initiated_dialog_positive_button">Aprobar</string>
     <string name="connections_connection_initiated_dialog_negative_button">Negar</string>
     <string name="connections_connection_success">Connected to %s</string>

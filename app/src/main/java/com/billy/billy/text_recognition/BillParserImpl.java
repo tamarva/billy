@@ -1,18 +1,20 @@
 package com.billy.billy.text_recognition;
 
-import android.content.Context;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.common.base.Strings;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+
+import androidx.annotation.NonNull;
 
 public class BillParserImpl implements BillParser {
     public static final String TOTAL_PRICE = "total";
@@ -30,9 +32,9 @@ public class BillParserImpl implements BillParser {
 
     @Override
     public Bill parse(@NonNull Context context, @NonNull FirebaseVisionText firebaseVisionText) {
-        Preconditions.checkNotNull(firebaseVisionText);
-        List<FirebaseVisionText.TextBlock> blocks = firebaseVisionText.getTextBlocks();
+        checkNotNull(firebaseVisionText);
 
+        List<FirebaseVisionText.TextBlock> blocks = firebaseVisionText.getTextBlocks();
         if (blocks.isEmpty()) {
             return Bill.createEmpty();
         }
@@ -55,9 +57,10 @@ public class BillParserImpl implements BillParser {
         return Bill.create(billItems);
     }
 
-    private List<BillLine> parseBillLine(@NonNull List<FirebaseVisionText.Line> myList, @NonNull List<BillLine> billLines) {
-        Preconditions.checkNotNull(myList);
-        Preconditions.checkNotNull(billLines);
+    private List<BillLine> parseBillLine(@NonNull List<FirebaseVisionText.Line> myList,
+                                         @NonNull List<BillLine> billLines) {
+        checkNotNull(myList);
+        checkNotNull(billLines);
 
         List<BillLine> updatedBillLines = new ArrayList<>();
         for (int i = 0; i < myList.size(); i++) {
@@ -84,7 +87,8 @@ public class BillParserImpl implements BillParser {
     }
 
     private List<BillItem> parseByType(@NonNull List<BillLine> updatedBillLines) {
-        Preconditions.checkNotNull(updatedBillLines);
+        checkNotNull(updatedBillLines);
+
         List<BillItem> billItems = new ArrayList<>();
         Map<Double, String> map = new HashMap<>();
         double sumOfPrices = 0, totalOrder = 0;
@@ -143,7 +147,8 @@ public class BillParserImpl implements BillParser {
     }
 
     private int getAmount(@NonNull String elem) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(elem));
+        checkArgument(!Strings.isNullOrEmpty(elem));
+
         int amount;
         if (elem.contains("x")) {
             amount = Integer.parseInt(elem.substring(0, elem.length() - 1));
@@ -162,10 +167,12 @@ public class BillParserImpl implements BillParser {
         return sumProduct;
     }
 
-    private Map<Double, String> findPrice(@NonNull String elem, boolean isTotalOrderPrice, boolean isTotalPriceInLine, @NonNull Map<Double, String> map) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(elem));
-        Preconditions.checkNotNull(map);
-        if (!isCurrentlySign(elem)) {
+    private Map<Double, String> findPrice(@NonNull String elem, boolean isTotalOrderPrice, boolean isTotalPriceInLine,
+                                          @NonNull Map<Double, String> map) {
+        checkArgument(!Strings.isNullOrEmpty(elem));
+        checkNotNull(map);
+
+        if (!isCurrencySymbol(elem)) {
             if (isTotalOrderPrice) {
                 map.put(parsePriceToDouble(elem), TOTAL_ORDER);
                 return map;
@@ -187,13 +194,14 @@ public class BillParserImpl implements BillParser {
     }
 
     private boolean checkIfTotal(@NonNull String elem) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(elem));
+        checkArgument(!Strings.isNullOrEmpty(elem));
         return elem.equals("TOTAL") || elem.equals("SUBTOTAL") || elem.equals("SUB-TOTAL") || elem.equals("SUB")
                 || elem.equals("Total") || elem.equals("Subtotal");
     }
 
-    private void checkBillType(@NonNull String product, double price, int amount, double total, @NonNull List<BillItem> billItems) {
-        Preconditions.checkNotNull(billItems);
+    private void checkBillType(@NonNull String product, double price, int amount, double total,
+                               @NonNull List<BillItem> billItems) {
+        checkNotNull(billItems);
         if (product.equals("")) {
             return;
         }
@@ -210,18 +218,21 @@ public class BillParserImpl implements BillParser {
     }
 
     public boolean checkValidity(@NonNull String elem) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(elem));
-        return (elem.equals("s") || elem.equals("S") || elem.equals("e") || elem.equals("E") || elem.equals("x") || elem.equals("X"));
+        checkArgument(!Strings.isNullOrEmpty(elem));
+        return (elem.equals("s") || elem.equals("S") || elem.equals("e") || elem.equals("E") || elem.equals("x")
+                || elem.equals("X"));
     }
 
     private boolean isNumeric(@NonNull String str) {
+        checkArgument(!Strings.isNullOrEmpty(str));
         Log.d(TAG, "isNumeric: string " + str);
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(str));
+
         return str.matches("[0-9]+x*");
     }
 
     public boolean isProduct(@NonNull String str) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(str));
+        checkArgument(!Strings.isNullOrEmpty(str));
+
         return str.matches("^[a-zA-Z]+[a-zA-Z &\\-]*$");
     }
 
@@ -230,7 +241,8 @@ public class BillParserImpl implements BillParser {
     }
 
     private double parsePriceToDouble(@NonNull String tempPrice) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(tempPrice));
+        checkArgument(!Strings.isNullOrEmpty(tempPrice));
+
         double price;
         if (tempPrice.contains("s") || tempPrice.contains("S") || isContainsCurrency(tempPrice.trim())) {
             try {
@@ -250,7 +262,8 @@ public class BillParserImpl implements BillParser {
     }
 
     private boolean isContainsCurrency(@NonNull String value) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
+        checkArgument(!Strings.isNullOrEmpty(value));
+
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
             if (Character.getType(c) == Character.CURRENCY_SYMBOL) {
@@ -260,8 +273,9 @@ public class BillParserImpl implements BillParser {
         return false;
     }
 
-    private boolean isCurrentlySign(@NonNull String element) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(element));
-        return element.length() <= 1 && Character.getType(element.charAt(0)) == Character.CURRENCY_SYMBOL;
+    private boolean isCurrencySymbol(@NonNull String element) {
+        checkArgument(!Strings.isNullOrEmpty(element));
+
+        return element.length() == 1 && Character.getType(element.charAt(0)) == Character.CURRENCY_SYMBOL;
     }
 }
