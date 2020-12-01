@@ -55,13 +55,29 @@ public class HomeFragment extends Fragment {
         sessionStateAdapter = new SessionStateAdapter();
         recyclerViewBill.setAdapter(sessionStateAdapter);
 
-        rootView.findViewById(R.id.home_fragment_scan_bill_button)
-                .setOnClickListener(view -> scanBill());
+        rootView.findViewById(R.id.home_fragment_main_bill_button)
+                .setOnClickListener(view -> {
+                    if (viewModel.shouldScanOnClick()) {
+                        scanBill();
+                    } else {
+                        sendEmail();
+                    }
+                });
     }
 
     private void scanBill() {
         CropImage.activity()
                 .start(requireContext(), this);
+    }
+
+    private void sendEmail() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, );
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, getString(R.string.share));
+        startActivity(shareIntent);
     }
 
     @Override
@@ -102,7 +118,7 @@ public class HomeFragment extends Fragment {
 
     private void observeShouldShowScanButton() {
         viewModel.getButtonCaptionStringResLiveData().observe(getViewLifecycleOwner(), captionStringRes -> {
-            getView().<TextView>findViewById(R.id.home_fragment_scan_bill_button)
+            getView().<TextView>findViewById(R.id.home_fragment_main_bill_button)
                     .setText(captionStringRes);
         });
     }

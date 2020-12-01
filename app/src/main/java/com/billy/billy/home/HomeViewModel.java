@@ -100,7 +100,7 @@ public class HomeViewModel extends AndroidViewModel {
                 String message =
                         applicationContext.getString(R.string.connections_connection_success, endpoint.getName());
                 Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show();
-                buttonCaptionStringResLiveData.setValue(R.string.email);
+                buttonCaptionStringResLiveData.setValue(R.string.share);
                 if (connectionRole.equals(ConnectionRole.ADVERTISER)) {
                     syncNewEndpoint(endpoint);
                 }
@@ -221,7 +221,7 @@ public class HomeViewModel extends AndroidViewModel {
                     List<String> participants = singletonList(getOwnName());
                     sessionStateLiveData.setValue(SessionState.create(participants, bill));
                     shouldShowProgressBarLiveData.setValue(false);
-                    buttonCaptionStringResLiveData.setValue(R.string.email);
+                    buttonCaptionStringResLiveData.setValue(R.string.share);
                 });
 
         connectionRole = ConnectionRole.ADVERTISER;
@@ -292,6 +292,11 @@ public class HomeViewModel extends AndroidViewModel {
 
     private String getOwnName() {
         return Preferences.Connections.getUserUniqueID(applicationContext);
+    }
+
+    public boolean shouldScanOnClick() {
+        Integer currentCaptionStringRes = buttonCaptionStringResLiveData.getValue();
+        return currentCaptionStringRes != null && currentCaptionStringRes == R.string.scan;
     }
 
     public interface Action {
