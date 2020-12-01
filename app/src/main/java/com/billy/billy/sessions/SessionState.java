@@ -19,6 +19,8 @@ import com.billy.billy.text_recognition.BillItem;
 import com.billy.billy.utils.Preferences;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 import androidx.annotation.NonNull;
 
@@ -36,6 +38,10 @@ public abstract class SessionState implements Serializable {
     public abstract Bill getBill();
 
     public abstract List<SessionItem> getSessionItems();
+
+    public static TypeAdapter<SessionState> typeAdapter(Gson gson) {
+        return new AutoValue_SessionState.GsonTypeAdapter(gson);
+    }
 
     public static SessionState create(@NonNull List<String> participants, @NonNull Bill bill) {
         checkArgument(participants != null && !participants.isEmpty());
