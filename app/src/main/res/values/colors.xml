@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="billy_blue_primary">#030C43</color>
     <color name="billy_green_primary">#037B41</color>
+    <color name="billy_green_dark_primary">#04582F</color>
     <color name="billy_black_primary">#000000</color>
-    <color name="billy_white_primary">#FFFFFF</color>
+    <color name="billy_white_primary">#FFFFFFFF</color>
+    <color name="billy_white_secondary">#EDE8D0</color>
+    <color name="billy_white_secondary_2">#FFEEEBD9</color>
 
     <color name="colorPrimary">@color/billy_green_primary</color>
-    <color name="colorPrimaryDark">@color/billy_blue_primary</color>
+    <color name="colorPrimaryDark">@color/billy_green_dark_primary</color>
     <color name="colorAccent">@color/billy_black_primary</color>
 
     <!-- Alert Dialog -->

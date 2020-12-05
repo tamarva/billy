@@ -39,6 +39,16 @@ public abstract class SessionState implements Serializable {
 
     public abstract List<SessionItem> getSessionItems();
 
+    public double getPriceForParticipant(@NonNull String participantName) {
+        checkArgument(!Strings.isNullOrEmpty(participantName));
+
+        return getSessionItems()
+                .stream()
+                .filter(sessionItem -> sessionItem.doesContainParticipant(participantName))
+                .mapToDouble(SessionItem::getPricePerParticipant)
+                .sum();
+    }
+
     public static TypeAdapter<SessionState> typeAdapter(Gson gson) {
         return new AutoValue_SessionState.GsonTypeAdapter(gson);
     }
@@ -142,7 +152,7 @@ public abstract class SessionState implements Serializable {
 
     public abstract Builder toBuilder();
 
-    private String normalizeName(@NonNull String fullName) {
+    public static String normalizeName(@NonNull String fullName) {
         return fullName.split(Preferences.Connections.USER_ID_SEPARATOR)[1];
     }
 
@@ -166,7 +176,7 @@ public abstract class SessionState implements Serializable {
 
         String youChoseFormat = context.getString(R.string.you_chose_format);
         for (SessionItem sessionItem : getSessionItems()) {
-            if (sessionItem.getOrderingParticipants().contains(ownName)) {
+            if (sessionItem.doesContainParticipant(ownName)) {
                 String curr = sessionItem.getItemName();
                 if (sessionItem.getOrderingParticipants().size() > 1) {
                     curr += "\t(+";
@@ -175,7 +185,7 @@ public abstract class SessionState implements Serializable {
                             curr += normalizeName(participant) + "\n";
                         }
                     }
-                    curr += ")";
+                    curr = curr.trim() + ")";
                 }
                 youChoseFormat += curr + "\n";
             }

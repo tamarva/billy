@@ -15,8 +15,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/billy_green_dark_primary"
         android:textSize="22sp"
         android:padding="10dp"
+        android:paddingStart="15dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
         tools:text="Tomer" />

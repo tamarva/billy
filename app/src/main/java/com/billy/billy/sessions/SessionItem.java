@@ -1,5 +1,6 @@
 package com.billy.billy.sessions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
@@ -25,6 +27,16 @@ public abstract class SessionItem {
     public abstract double getItemPrice();
 
     public abstract List<String> getOrderingParticipants();
+
+    public boolean doesContainParticipant(@NonNull String participantName) {
+        checkArgument(!Strings.isNullOrEmpty(participantName));
+
+        return getOrderingParticipants().contains(participantName);
+    }
+
+    public double getPricePerParticipant() {
+        return getItemPrice() / getOrderingParticipants().size();
+    }
 
     public static TypeAdapter<SessionItem> typeAdapter(Gson gson) {
         return new AutoValue_SessionItem.GsonTypeAdapter(gson);
