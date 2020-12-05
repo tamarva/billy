@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.billy.billy.BuildConfig;
 import com.billy.billy.R;
 import com.billy.billy.connections.ConnectionLifecycleListener;
 import com.billy.billy.connections.ConnectionRole;
@@ -53,6 +54,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
@@ -67,6 +69,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<SessionState> sessionStateLiveData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonCaptionStringResLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> shouldShowProgressBarLiveData = new MutableLiveData<>(true);
+    private final LiveData<Double> priceLiveData;
     private ConnectionRole connectionRole = ConnectionRole.DISCOVERER;
 
     public HomeViewModel(Application application) {
@@ -77,6 +80,13 @@ public class HomeViewModel extends AndroidViewModel {
         connectionService.setConnectionRole(connectionRole);
 
         buttonCaptionStringResLiveData.setValue(R.string.scan);
+
+        priceLiveData = createPriceLiveData();
+    }
+
+    private LiveData<Double> createPriceLiveData() {
+        return Transformations.distinctUntilChanged(Transformations.map(sessionStateLiveData, sessionState ->
+                sessionState.getPriceForParticipant(getOwnName())));
     }
 
     private ConnectionLifecycleListener createConnectionLifecycleListener() {
@@ -206,6 +216,10 @@ public class HomeViewModel extends AndroidViewModel {
         return action;
     }
 
+    public LiveData<Double> getPriceLiveData() {
+        return priceLiveData;
+    }
+
     public LiveData<List<Endpoint>> getDiscoveredEndpoints() {
         return discoveredEndpoints;
     }
@@ -237,6 +251,30 @@ public class HomeViewModel extends AndroidViewModel {
 
         connectionRole = ConnectionRole.ADVERTISER;
         connectionService.setConnectionRole(connectionRole);
+    }
+
+    public void onCreateSampleData() {
+        checkState(BuildConfig.DEBUG);
+
+        Bill bill = createSampleData();
+        Log.d(TAG, "Got result: " + bill.toString());
+        List<String> participants = singletonList(getOwnName());
+        sessionStateLiveData.setValue(SessionState.create(participants, bill));
+        shouldShowProgressBarLiveData.setValue(false);
+        buttonCaptionStringResLiveData.setValue(R.string.share);
+        connectionRole = ConnectionRole.ADVERTISER;
+        connectionService.setConnectionRole(connectionRole);
+    }
+
+    private Bill createSampleData() {
+        BillItem billItem1 = BillItem.create("Hamburger", 70, 1, 70);
+        BillItem billItem2 = BillItem.create("Schnitzel", 50, 1, 50);
+        BillItem billItem3 = BillItem.create("Wings", 40, 1, 40);
+        BillItem billItem4 = BillItem.create("Cola", 12, 2, 24);
+
+        List<BillItem> billItems = Arrays.asList(billItem1, billItem2, billItem3, billItem4);
+
+        return Bill.create(billItems);
     }
 
     public void onStart() {
@@ -301,7 +339,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-    private String getOwnName() {
+    public String getOwnName() {
         return Preferences.Connections.getUserUniqueID(applicationContext);
     }
 
@@ -322,7 +360,10 @@ public class HomeViewModel extends AndroidViewModel {
         if (sessionState != null) {
             sessionSummary = sessionState.getSummary(applicationContext, getOwnName());
         }
-        return applicationContext.getString(R.string.summary_prefix, getCurrentDate(), sessionSummary);
+        return applicationContext.getString(R.string.summary_prefix,
+                getCurrentDate(),
+                sessionSummary,
+                sessionState.getPriceForParticipant(getOwnName()));
     }
 
     public interface Action {

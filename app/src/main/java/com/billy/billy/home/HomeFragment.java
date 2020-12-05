@@ -4,18 +4,24 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.billy.billy.BuildConfig;
 import com.billy.billy.R;
 import com.billy.billy.connections.Endpoint;
 import com.billy.billy.sessions.SessionItem;
+import com.billy.billy.sessions.SessionState;
 import com.google.common.base.Preconditions;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -33,6 +39,10 @@ public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
     private SessionStateAdapter sessionStateAdapter;
     private DiscoveredEndpointsListAdapter discoveredEndpointsListAdapter;
+    private RecyclerView discoveredDevicesRecyclerView;
+    private RecyclerView billItemsRecyclerView;
+    private ProgressBar progressBar;
+    private TextView priceTextView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,15 +57,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpViews(@NonNull View rootView) {
-        RecyclerView recyclerViewEndpoints = rootView.findViewById(R.id.home_fragment_discovered_devices_rv);
-        recyclerViewEndpoints.setLayoutManager(new LinearLayoutManager(requireContext()));
+        discoveredDevicesRecyclerView = rootView.findViewById(R.id.home_fragment_discovered_devices_rv);
+        discoveredDevicesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         discoveredEndpointsListAdapter = new DiscoveredEndpointsListAdapter();
-        recyclerViewEndpoints.setAdapter(discoveredEndpointsListAdapter);
+        discoveredDevicesRecyclerView.setAdapter(discoveredEndpointsListAdapter);
 
-        RecyclerView recyclerViewBill = rootView.findViewById(R.id.home_fragment_bill_items_rv);
-        recyclerViewBill.setLayoutManager(new LinearLayoutManager(requireContext()));
+        billItemsRecyclerView = rootView.findViewById(R.id.home_fragment_bill_items_rv);
+        billItemsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         sessionStateAdapter = new SessionStateAdapter();
-        recyclerViewBill.setAdapter(sessionStateAdapter);
+        billItemsRecyclerView.setAdapter(sessionStateAdapter);
 
         rootView.findViewById(R.id.home_fragment_main_bill_button)
                 .setOnClickListener(view -> {
@@ -65,6 +75,18 @@ public class HomeFragment extends Fragment {
                         sendEmail();
                     }
                 });
+
+        progressBar = rootView.findViewById(R.id.home_fragment_progress_bar);
+        priceTextView = rootView.findViewById(R.id.home_fragment_bill_price);
+
+        if (BuildConfig.DEBUG) {
+            View loadSampleDataButton = rootView.findViewById(R.id.home_fragment_sample_data_button);
+            loadSampleDataButton.setVisibility(View.VISIBLE);
+            loadSampleDataButton.setOnClickListener(view -> {
+                viewModel.onCreateSampleData();
+                loadSampleDataButton.setVisibility(View.INVISIBLE);
+            });
+        }
     }
 
     private void scanBill() {
@@ -94,6 +116,7 @@ public class HomeFragment extends Fragment {
         observeBillItems();
         observeCurrentSessionStatus();
         observeShouldShowProgressBar();
+        observePrice();
     }
 
     private void observeActions() {
@@ -124,24 +147,26 @@ public class HomeFragment extends Fragment {
                     .setText(captionStringRes);
 
             if (captionStringRes == R.string.scan) {
-                getView().findViewById(R.id.home_fragment_discovered_devices_rv)
-                        .setVisibility(View.VISIBLE);
-                getView().findViewById(R.id.home_fragment_bill_items_rv)
-                        .setVisibility(View.INVISIBLE);
+                discoveredDevicesRecyclerView.setVisibility(View.VISIBLE);
+                billItemsRecyclerView.setVisibility(View.INVISIBLE);
+                priceTextView.setVisibility(View.INVISIBLE);
             } else {
-                getView().findViewById(R.id.home_fragment_discovered_devices_rv)
-                        .setVisibility(View.INVISIBLE);
-                getView().findViewById(R.id.home_fragment_bill_items_rv)
-                        .setVisibility(View.VISIBLE);
+                discoveredDevicesRecyclerView.setVisibility(View.INVISIBLE);
+                billItemsRecyclerView.setVisibility(View.VISIBLE);
+                priceTextView.setVisibility(View.VISIBLE);
             }
         });
     }
 
     private void observeShouldShowProgressBar() {
-        viewModel.getShouldShowProgressBarLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
-            getView().findViewById(R.id.home_fragment_progress_bar)
-                    .setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-        });
+        viewModel.getShouldShowProgressBarLiveData().observe(getViewLifecycleOwner(),
+                shouldShow -> progressBar.setVisibility(shouldShow ? View.VISIBLE : View.GONE));
+    }
+
+
+    private void observePrice() {
+        viewModel.getPriceLiveData().observe(getViewLifecycleOwner(), price ->
+                priceTextView.setText(getString(R.string.price_text, price)));
     }
 
     @Override
@@ -239,11 +264,31 @@ public class HomeFragment extends Fragment {
                 Preconditions.checkNotNull(sessionItem);
 
                 String billItemText = sessionItem.getItemName() + " $" + sessionItem.getItemPrice();
+
                 int numParticipantsSelected = sessionItem.getOrderingParticipants().size();
                 if (numParticipantsSelected > 0) {
-                    billItemText += "\t(" + numParticipantsSelected + ")";
+                    billItemText += "\t(";
+                    for (String participant : sessionItem.getOrderingParticipants()) {
+                        billItemText += SessionState.normalizeName(participant) + ", ";
+                    }
+                    billItemText = billItemText.substring(0, billItemText.length() - 2) + ")";  // Replace last ", " with ")"
+                    sessionItemTextView.setText(billItemText);
+                } else {
+                    SpannableString underlineText = new SpannableString(billItemText);
+                    underlineText.setSpan(new UnderlineSpan(), 0, underlineText.length(), 0);
+                    sessionItemTextView.setText(underlineText);
                 }
-                sessionItemTextView.setText(billItemText);
+
+                if (sessionItem.doesContainParticipant(viewModel.getOwnName())) {
+                    if (numParticipantsSelected > 1) {
+                        sessionItemTextView.setTypeface(null, Typeface.ITALIC);
+                    } else {
+                        sessionItemTextView.setTypeface(null, Typeface.BOLD_ITALIC);
+                    }
+                } else {
+                    sessionItemTextView.setTypeface(null, Typeface.NORMAL);
+                }
+
                 sessionItemTextView.setOnClickListener(view -> viewModel.onBillItemClicked(position));
                 sessionItemTextView.setOnLongClickListener(view -> viewModel.onBillItemLongClicked(position));
             }

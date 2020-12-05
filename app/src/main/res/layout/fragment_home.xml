@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/fragment_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -37,6 +40,18 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/home_fragment_bill_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/home_fragment_main_bill_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/price_text"
+        app:layout_constraintTop_toBottomOf="@id/home_fragment_recycler_view_wrapper"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
     <Button
         android:id="@+id/home_fragment_main_bill_button"
         android:layout_width="0dp"
@@ -44,12 +59,29 @@
         android:layout_margin="8dp"
         android:background="@drawable/home_fragment_scan_bill_button_background"
         android:textAlignment="center"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/billy_white_primary"
         android:text="@string/scan"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_fragment_recycler_view_wrapper"
+        app:layout_constraintTop_toBottomOf="@id/home_fragment_bill_price"
         app:layout_constraintWidth_max="340dp"/>
+
+    <Button
+        android:id="@+id/home_fragment_sample_data_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:background="@color/cardview_dark_background"
+        android:textAlignment="center"
+        android:text="Load Sample Data"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
